@@ -65,7 +65,7 @@ export async function task(roundNumber) {
           inputElement.style.cssText = `
             border: 2px solid #2ea44f !important;
             box-shadow: 0 0 5px rgba(46, 164, 79, 0.4);
-            transition: all 0.3s ease-in-out;
+            animation: pulse 2s infinite;
           `;
           
           // Create hint element
@@ -107,7 +107,7 @@ export async function task(roundNumber) {
             padding: 8px;
             border: 2px solid #2ea44f;
             margin: 5px 0;
-            transition: all 0.3s ease-in-out;
+            animation: pulse 2s infinite;
           `;
           
           // Create hint for checkbox with updated text
@@ -124,32 +124,12 @@ export async function task(roundNumber) {
           // Add the hint after the checkbox container
           checkboxContainer.appendChild(checkboxHint);
         }
-
-        // Highlight the generate token button
-        const generateButton = document.querySelector('button[type="submit"]');
-        if (generateButton) {
-          generateButton.style.cssText = `
-            border: 3px solid #ff0000 !important;
-            box-shadow: 0 0 10px rgba(255, 0, 0, 0.4);
-            animation: buttonPulse 2s infinite;
-          `;
-
-          // Add button pulse animation
-          const buttonStyle = document.createElement('style');
-          buttonStyle.textContent = `
-            @keyframes buttonPulse {
-              0% { transform: scale(1); border-color: #ff0000; box-shadow: 0 0 10px rgba(255, 0, 0, 0.4); }
-              50% { transform: scale(1.05); border-color: #ff5555; box-shadow: 0 0 15px rgba(255, 0, 0, 0.6); }
-              100% { transform: scale(1); border-color: #ff0000; box-shadow: 0 0 10px rgba(255, 0, 0, 0.4); }
-            }
-          `;
-          document.head.appendChild(buttonStyle);
-        }
       });
 
       // Wait for navigation after clicking generate token
       await page.waitForNavigation({
-        waitUntil: 'networkidle0'
+        waitUntil: 'networkidle0',
+        timeout: 300000
       });
 
       // Check if we're on the tokens page

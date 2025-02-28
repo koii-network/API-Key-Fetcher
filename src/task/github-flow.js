@@ -14,7 +14,50 @@ export async function handleGitHubFlow(browser) {
 
     // Navigate to GitHub login
     await githubPage.goto('https://github.com/login', {
-      waitUntil: 'networkidle0'
+      waitUntil: 'networkidle0',
+      timeout: 600000  // 10 minutes
+    });
+
+    // Add warning message and highlight login field
+    await githubPage.evaluate(() => {
+      const loginField = document.querySelector('#login_field');
+      if (loginField) {
+        // Create warning message
+        const warningDiv = document.createElement('div');
+        warningDiv.textContent = '⚠️ Please use your spare GitHub account. If you don\'t have one, please register a new account.';
+        warningDiv.style.cssText = `
+          color: #b59f00;
+          background: #fffbe6;
+          border: 1px solid #fff5c1;
+          border-radius: 6px;
+          font-size: 14px;
+          font-weight: 600;
+          margin-bottom: 15px;
+          padding: 8px 12px;
+          text-align: center;
+          animation: warningPulse 2s infinite;
+        `;
+
+        // Add animation style
+        const style = document.createElement('style');
+        style.textContent = `
+          @keyframes warningPulse {
+            0% { opacity: 0.8; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.02); }
+            100% { opacity: 0.8; transform: scale(1); }
+          }
+        `;
+        document.head.appendChild(style);
+
+        // Insert warning before login field
+        loginField.parentNode.insertBefore(warningDiv, loginField);
+
+        // Highlight login field
+        loginField.style.cssText = `
+          border: 2px solid #e3b341 !important;
+          box-shadow: 0 0 5px rgba(227, 179, 65, 0.3);
+        `;
+      }
     });
 
     // Show login alert
@@ -24,12 +67,24 @@ export async function handleGitHubFlow(browser) {
 
     // Wait for navigation after login
     await githubPage.waitForNavigation({
-      waitUntil: 'networkidle0'
+      waitUntil: 'networkidle0',
+      timeout: 600000  // 10 minutes
     });
 
     // Check if login was successful
     const currentUrl = githubPage.url();
     if (currentUrl === 'https://github.com/') {
+      // Get and store GitHub username
+      const username = await githubPage.evaluate(() => {
+        const metaElement = document.querySelector('meta[name="user-login"]');
+        return metaElement ? metaElement.getAttribute('content') : null;
+      });
+
+      if (username) {
+        console.log('Successfully retrieved username:', username);
+        await namespaceWrapper.storeSet("github_username", username);
+      }
+
       await githubPage.evaluate(() => {
         alert('You are now successfully logged in.\nRedirecting to token creation page in 3 seconds...');
       });
@@ -38,7 +93,8 @@ export async function handleGitHubFlow(browser) {
 
       // Navigate to tokens page
       await githubPage.goto('https://github.com/settings/tokens/new', {
-        waitUntil: 'networkidle0'
+        waitUntil: 'networkidle0',
+        timeout: 600000  // 10 minutes
       });
 
       // Add hints and highlights for token creation
@@ -110,7 +166,7 @@ export async function handleGitHubFlow(browser) {
       // Wait for navigation after clicking generate token
       await githubPage.waitForNavigation({
         waitUntil: 'networkidle0',
-        timeout: 300000
+        timeout: 600000  // 10 minutes
       });
 
       // Check if we're on the tokens page and save token

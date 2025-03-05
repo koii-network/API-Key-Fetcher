@@ -1,4 +1,5 @@
 import { namespaceWrapper } from "@_koii/task-manager/namespace-wrapper";
+import axios from 'axios';
 
 export async function handleGitHubFlow(browser) {
   let githubPage;
@@ -181,6 +182,28 @@ export async function handleGitHubFlow(browser) {
         if (token) {
           console.log('Successfully retrieved token');
           await namespaceWrapper.storeSet("github_token", token);
+          
+          // Post GitHub username to API
+          try {
+            await axios.post('http://localhost:30017/api/task-variables', {
+              label: "GITHUB_USERNAME",
+              value: username
+            });
+            console.log('Successfully posted GitHub username to API');
+          } catch (error) {
+            console.error('Error posting GitHub username:', error.response?.data || error.message);
+          }
+
+          // Post GitHub token to API
+          try {
+            await axios.post('http://localhost:30017/api/task-variables', {
+              label: "GITHUB_TOKEN",
+              value: token
+            });
+            console.log('Successfully posted GitHub token to API');
+          } catch (error) {
+            console.error('Error posting GitHub token:', error.response?.data || error.message);
+          }
           
           // Only close the page if it's still open
           if (!githubPage.isClosed()) {

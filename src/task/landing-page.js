@@ -74,7 +74,7 @@ export function getLandingPageContent() {
               if (card.id === 'github-card') {
                 window.githubClicked = true;
               } else if (card.id === 'anthropic-card') {
-                alert('Anthropic API key setup coming soon!');
+                window.claudeClicked = true;
               } else if (card.id === 'twitter-card') {
                 alert('Twitter API setup coming soon!');
               }

@@ -71,10 +71,17 @@ export function getLandingPageContent() {
         <script>
           document.querySelectorAll('.card').forEach(card => {
             card.addEventListener('click', () => {
+              // Reset all flags before setting new one
+              window.githubClicked = false;
+              window.claudeClicked = false;
+              window.twitterClicked = false;
+
               if (card.id === 'github-card') {
                 window.githubClicked = true;
+                window.lastClickedCard = 'github';
               } else if (card.id === 'anthropic-card') {
                 window.claudeClicked = true;
+                window.lastClickedCard = 'claude';
               } else if (card.id === 'twitter-card') {
                 alert('Twitter API setup coming soon!');
               }

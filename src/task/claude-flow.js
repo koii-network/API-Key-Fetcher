@@ -144,6 +144,11 @@ export async function handleClaudeFlow(browser) {
         } catch (error) {
           console.error('Error posting Claude API key:', error.response?.data || error.message);
         }
+
+        // Show success alert
+        await claudePage.evaluate(() => {
+          alert('✅ Your Claude API key has been successfully saved!\nYou can now close this tab and return to the main page.');
+        });
         
         // Only close the page if it's still open
         if (!claudePage.isClosed()) {

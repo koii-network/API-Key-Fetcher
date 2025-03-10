@@ -27,30 +27,36 @@ export async function task(roundNumber) {
     // Set landing page content
     await landingPage.setContent(getLandingPageContent());
 
-    // Wait for either GitHub or Claude card click
-    await landingPage.waitForFunction(() => 
-      window.githubClicked === true || window.claudeClicked === true
-    );
-    
-    // Check which card was clicked and handle accordingly
-    const clickedCard = await landingPage.evaluate(() => {
-      if (window.githubClicked) return 'github';
-      if (window.claudeClicked) return 'claude';
-      return null;
-    });
+    while (true) {
+      try {
+        // Wait for any card click
+        await landingPage.waitForFunction(() => 
+          window.lastClickedCard !== undefined, 
+          { timeout: 600000 } // 10 minutes timeout
+        );
+        
+        // Get which card was clicked
+        const clickedCard = await landingPage.evaluate(() => {
+          const card = window.lastClickedCard;
+          window.lastClickedCard = undefined; // Reset for next click
+          return card;
+        });
 
-    if (clickedCard === 'github') {
-      await handleGitHubFlow(browser);
-    } else if (clickedCard === 'claude') {
-      await handleClaudeFlow(browser);
+        if (clickedCard === 'github') {
+          await handleGitHubFlow(browser);
+        } else if (clickedCard === 'claude') {
+          await handleClaudeFlow(browser);
+        }
+        
+        // Continue waiting for more clicks
+        
+      } catch (error) {
+        console.error("Error handling card click:", error);
+      }
     }
-
-    // Keep browser open for other potential actions
-    // Only close browser when user is completely done
     
   } catch (error) {
     console.error("EXECUTE TASK ERROR:", error);
-    // Only close browser on error
     if (browser) await browser.close();
   }
 }

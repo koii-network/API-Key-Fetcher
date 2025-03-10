@@ -1,31 +1,31 @@
 import { namespaceWrapper } from "@_koii/task-manager/namespace-wrapper";
 import axios from 'axios';
 
-export async function handleGitHubFlow(browser) {
-  let githubPage;
+export async function handleTwitterFlow(browser) {
+  let twitterPage;
   try {
-    // Create new page for GitHub flow
-    githubPage = await browser.newPage();
+    // Create new page for Twitter flow
+    twitterPage = await browser.newPage();
     
     // Set viewport size
-    await githubPage.setViewport({
+    await twitterPage.setViewport({
       width: 1920,
       height: 1080
     });
 
-    // Navigate to GitHub login
-    await githubPage.goto('https://github.com/login', {
+    // Navigate to Twitter login
+    await twitterPage.goto('https://x.com/login', {
       waitUntil: 'networkidle0',
       timeout: 600000  // 10 minutes
     });
 
     // Add warning message and highlight login field
-    await githubPage.evaluate(() => {
+    await twitterPage.evaluate(() => {
       const loginField = document.querySelector('#login_field');
       if (loginField) {
         // Create warning message
         const warningDiv = document.createElement('div');
-        warningDiv.textContent = '⚠️ Please use your spare GitHub account. If you don\'t have one, please register a new account.';
+        warningDiv.textContent = '⚠️ Please use your spare Twitter account. If you don\'t have one, please register a new account.';
         warningDiv.style.cssText = `
           color: #b59f00;
           background: #fffbe6;
@@ -62,44 +62,44 @@ export async function handleGitHubFlow(browser) {
     });
 
     // Show login alert
-    await githubPage.evaluate(() => {
-      alert('Please login to GitHub to continue to next step');
+    await twitterPage.evaluate(() => {
+      alert('Please login to Twitter to continue to next step');
     });
 
     // Wait for navigation after login
-    await githubPage.waitForNavigation({
+    await twitterPage.waitForNavigation({
       waitUntil: 'networkidle0',
       timeout: 600000  // 10 minutes
     });
 
     // Check if login was successful
-    const currentUrl = githubPage.url();
-    if (currentUrl === 'https://github.com/') {
-      // Get and store GitHub username
-      const username = await githubPage.evaluate(() => {
+    const currentUrl = twitterPage.url();
+    if (currentUrl === 'https://x.com/') {
+      // Get and store Twitter username
+        const username = await twitterPage.evaluate(() => {
         const metaElement = document.querySelector('meta[name="user-login"]');
         return metaElement ? metaElement.getAttribute('content') : null;
       });
 
       if (username) {
         console.log('Successfully retrieved username:', username);
-        await namespaceWrapper.storeSet("github_username", username);
+        await namespaceWrapper.storeSet("twitter_username", username);
       }
 
-      await githubPage.evaluate(() => {
+      await twitterPage.evaluate(() => {
         alert('You are now successfully logged in.\nRedirecting to token creation page in 3 seconds...');
       });
 
       await new Promise(resolve => setTimeout(resolve, 3000));
 
       // Navigate to tokens page
-      await githubPage.goto('https://github.com/settings/tokens/new', {
+      await twitterPage.goto('https://x.com/settings/apps', {
         waitUntil: 'networkidle0',
         timeout: 600000  // 10 minutes
       });
 
       // Add hints and highlights for token creation
-      await githubPage.evaluate(() => {
+      await twitterPage.evaluate(() => {
         const inputElement = document.querySelector('input[name="oauth_access[description]"]');
         if (inputElement) {
           // Style the input element
@@ -165,54 +165,49 @@ export async function handleGitHubFlow(browser) {
       });
 
       // Wait for navigation after clicking generate token
-      await githubPage.waitForNavigation({
+      await twitterPage.waitForNavigation({
         waitUntil: 'networkidle0',
         timeout: 600000  // 10 minutes
       });
 
       // Check if we're on the tokens page and save token
-      if (githubPage.url() === 'https://github.com/settings/tokens') {
+      if (twitterPage.url() === 'https://x.com/settings/apps') {
         console.log('Successfully generated token');
 
-        const token = await githubPage.evaluate(() => {
+        const token = await twitterPage.evaluate(() => {
           const tokenElement = document.querySelector('#new-oauth-token');
           return tokenElement ? tokenElement.textContent : null;
         });
 
         if (token) {
           console.log('Successfully retrieved token');
-          await namespaceWrapper.storeSet("github_token", token);
+          await namespaceWrapper.storeSet("twitter_token", token);
           
           // Post GitHub username to API
           try {
             await axios.post('http://localhost:30017/api/task-variables', {
-              label: "GITHUB_USERNAME",
+              label: "TWITTER_USERNAME",
               value: username
             });
-            console.log('Successfully posted GitHub username to API');
+            console.log('Successfully posted Twitter username to API');
           } catch (error) {
-            console.error('Error posting GitHub username:', error.response?.data || error.message);
+            console.error('Error posting Twitter username:', error.response?.data || error.message);
           }
 
           // Post GitHub token to API
           try {
             await axios.post('http://localhost:30017/api/task-variables', {
-              label: "GITHUB_TOKEN",
+              label: "TWITTER_TOKEN",
               value: token
             });
-            console.log('Successfully posted GitHub token to API');
+            console.log('Successfully posted Twitter token to API');
           } catch (error) {
-            console.error('Error posting GitHub token:', error.response?.data || error.message);
+            console.error('Error posting Twitter token:', error.response?.data || error.message);
           }
-
-          // Show success alert
-          await githubPage.evaluate(() => {
-            alert('✅ Your GitHub information has been successfully saved!\nYou can now close this tab and return to the main page.');
-          });
           
           // Only close the page if it's still open
-          if (!githubPage.isClosed()) {
-            await githubPage.close();
+          if (!twitterPage.isClosed()) {
+            await twitterPage.close();
           }
           return true;
         }
@@ -220,13 +215,13 @@ export async function handleGitHubFlow(browser) {
     }
     return false;
   } catch (error) {
-    console.error("GitHub flow error:", error);
+    console.error("Twitter flow error:", error);
     return false;
   } finally {
     // Only close the page in finally if it exists and hasn't been closed yet
     if (githubPage && !githubPage.isClosed()) {
       try {
-        await githubPage.close();
+        await twitterPage.close();
       } catch (error) {
         console.log("Page already closed");
       }

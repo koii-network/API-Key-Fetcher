@@ -28,6 +28,7 @@ export function getLandingPageContent() {
             cursor: pointer;
             transition: all 0.2s;
             text-align: center;
+            position: relative;
           }
           .card:hover {
             transform: translateY(-5px);
@@ -46,6 +47,29 @@ export function getLandingPageContent() {
             color: #586069;
             margin: 0;
             font-size: 14px;
+          }
+          .card.completed::after {
+            content: "✓";
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #2ea44f;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+          }
+          .completed {
+            border: 2px solid #2ea44f;
+            box-shadow: 0 2px 10px rgba(46, 164, 79, 0.2);
+          }
+          .completed:hover {
+            box-shadow: 0 4px 15px rgba(46, 164, 79, 0.3);
           }
         </style>
       </head>
@@ -69,8 +93,36 @@ export function getLandingPageContent() {
           </div>
         </div>
         <script>
+          // Add flag to track if a flow is in progress
+          window.flowInProgress = false;
+
+          // Function to check completion status from window.dbValues
+          function checkCompletionStatus() {
+            if (window.dbValues) {
+              // Check GitHub completion
+              if (window.dbValues.github_token) {
+                document.getElementById('github-card').classList.add('completed');
+              }
+              
+              // Check Claude completion
+              if (window.dbValues.claude_api_key) {
+                document.getElementById('anthropic-card').classList.add('completed');
+              }
+            }
+          }
+
+          // Check completion status on load
+          checkCompletionStatus();
+
+          // Add click handlers
           document.querySelectorAll('.card').forEach(card => {
             card.addEventListener('click', () => {
+              // Check if a flow is already in progress
+              if (window.flowInProgress) {
+                alert('⚠️ Please finish the ongoing flow first before starting another one.');
+                return;
+              }
+
               // Reset all flags before setting new one
               window.githubClicked = false;
               window.claudeClicked = false;
@@ -79,9 +131,11 @@ export function getLandingPageContent() {
               if (card.id === 'github-card') {
                 window.githubClicked = true;
                 window.lastClickedCard = 'github';
+                window.flowInProgress = true;
               } else if (card.id === 'anthropic-card') {
                 window.claudeClicked = true;
                 window.lastClickedCard = 'claude';
+                window.flowInProgress = true;
               } else if (card.id === 'twitter-card') {
                 alert('Twitter API setup coming soon!');
               }

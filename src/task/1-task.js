@@ -2,7 +2,6 @@ import { namespaceWrapper } from "@_koii/task-manager/namespace-wrapper";
 import puppeteer from 'puppeteer';
 import { handleGitHubFlow } from './github-flow.js';
 import { handleClaudeFlow } from './claude-flow.js';
-import { getLandingPageContent } from './landing-page.js';
 
 export async function task(roundNumber) {
   let browser;
@@ -24,8 +23,11 @@ export async function task(roundNumber) {
       height: 1080
     });
 
-    // Set landing page content
-    await landingPage.setContent(getLandingPageContent());
+    // Navigate to landing page
+    await landingPage.goto('http://localhost:3000/landing-page', {
+      waitUntil: 'networkidle0',
+      timeout: 600000  // 10 minutes
+    });
 
     while (true) {
       try {
@@ -48,7 +50,8 @@ export async function task(roundNumber) {
           await handleClaudeFlow(browser);
         }
         
-        // Continue waiting for more clicks
+        // Refresh the page to update completion status
+        await landingPage.reload({ waitUntil: 'networkidle0' });
         
       } catch (error) {
         console.error("Error handling card click:", error);

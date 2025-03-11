@@ -7,6 +7,19 @@ export async function handleGitHubFlow(browser) {
     // Create new page for GitHub flow
     githubPage = await browser.newPage();
     
+    // Add close listener to reset flag
+    githubPage.on('close', async () => {
+      try {
+        const pages = await browser.pages();
+        const landingPage = pages[0];
+        await landingPage.evaluate(() => {
+          window.flowInProgress = false;
+        });
+      } catch (error) {
+        console.log("Could not reset flow flag on page close:", error);
+      }
+    });
+
     // Set viewport size
     await githubPage.setViewport({
       width: 1920,
@@ -183,32 +196,50 @@ export async function handleGitHubFlow(browser) {
           console.log('Successfully retrieved token');
           await namespaceWrapper.storeSet("github_token", token);
           
+          let postSuccess = true;
+          
           // Post GitHub username to API
           try {
-            await axios.post('http://localhost:30017/api/task-variables', {
+            const usernameResponse = await axios.post('http://localhost:30017/api/task-variables', {
               label: "GITHUB_USERNAME",
               value: username
             });
-            console.log('Successfully posted GitHub username to API');
+            if (!usernameResponse.data.success) {
+              postSuccess = false;
+              console.error('Failed to post GitHub username:', usernameResponse.data);
+            }
           } catch (error) {
+            postSuccess = false;
             console.error('Error posting GitHub username:', error.response?.data || error.message);
           }
 
           // Post GitHub token to API
           try {
-            await axios.post('http://localhost:30017/api/task-variables', {
+            const tokenResponse = await axios.post('http://localhost:30017/api/task-variables', {
               label: "GITHUB_TOKEN",
               value: token
             });
-            console.log('Successfully posted GitHub token to API');
+            if (!tokenResponse.data.success) {
+              postSuccess = false;
+              console.error('Failed to post GitHub token:', tokenResponse.data);
+            }
           } catch (error) {
+            postSuccess = false;
             console.error('Error posting GitHub token:', error.response?.data || error.message);
           }
 
-          // Show success alert
-          await githubPage.evaluate(() => {
-            alert('✅ Your GitHub information has been successfully saved!\nYou can now close this tab and return to the main page.');
-          });
+          // Show success alert only if both POSTs were successful
+          if (postSuccess) {
+            await githubPage.evaluate(() => {
+              window.flowInProgress = false;  // Reset the flag
+              alert('✅ Your GitHub information has been successfully saved!\nYou can now close this tab and return to the main page.');
+            });
+          } else {
+            await githubPage.evaluate(() => {
+              window.flowInProgress = false;  // Reset the flag even on error
+              alert('⚠️ There was an issue saving your GitHub information. Please try again.');
+            });
+          }
           
           // Only close the page if it's still open
           if (!githubPage.isClosed()) {
@@ -221,6 +252,10 @@ export async function handleGitHubFlow(browser) {
     return false;
   } catch (error) {
     console.error("GitHub flow error:", error);
+    // Reset flow flag on error
+    await browser.evaluate(() => {
+      window.flowInProgress = false;
+    });
     return false;
   } finally {
     // Only close the page in finally if it exists and hasn't been closed yet
@@ -230,6 +265,17 @@ export async function handleGitHubFlow(browser) {
       } catch (error) {
         console.log("Page already closed");
       }
+    }
+    // Reset flow flag in case of manual close or any other scenario
+    try {
+      await browser.pages().then(async pages => {
+        const landingPage = pages[0];
+        await landingPage.evaluate(() => {
+          window.flowInProgress = false;
+        });
+      });
+    } catch (error) {
+      console.log("Could not reset flow flag:", error);
     }
   }
 } 

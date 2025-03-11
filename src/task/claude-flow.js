@@ -4,9 +4,22 @@ import axios from 'axios';
 export async function handleClaudeFlow(browser) {
   let claudePage;
   try {
-    // Create new page for GitHub flow
+    // Create new page for Claude flow
     claudePage = await browser.newPage();
     
+    // Add close listener to reset flag
+    claudePage.on('close', async () => {
+      try {
+        const pages = await browser.pages();
+        const landingPage = pages[0];
+        await landingPage.evaluate(() => {
+          window.flowInProgress = false;
+        });
+      } catch (error) {
+        console.log("Could not reset flow flag on page close:", error);
+      }
+    });
+
     // Set viewport size
     await claudePage.setViewport({
       width: 1920,
@@ -134,21 +147,34 @@ export async function handleClaudeFlow(browser) {
         console.log('Successfully retrieved API key');
         await namespaceWrapper.storeSet("claude_api_key", apiKey);
         
+        let postSuccess = false;
+        
         // Post Claude API key to API
         try {
-          await axios.post('http://localhost:30017/api/task-variables', {
+          const response = await axios.post('http://localhost:30017/api/task-variables', {
             label: "CLAUDE_API_KEY",
             value: apiKey
           });
-          console.log('Successfully posted Claude API key to API');
+          postSuccess = response.data.success;
+          if (!postSuccess) {
+            console.error('Failed to post Claude API key:', response.data);
+          }
         } catch (error) {
           console.error('Error posting Claude API key:', error.response?.data || error.message);
         }
 
-        // Show success alert
-        await claudePage.evaluate(() => {
-          alert('✅ Your Claude API key has been successfully saved!\nYou can now close this tab and return to the main page.');
-        });
+        // Show appropriate alert based on POST success
+        if (postSuccess) {
+          await claudePage.evaluate(() => {
+            window.flowInProgress = false;  // Reset the flag
+            alert('✅ Your Claude API key has been successfully saved!\nYou can now close this tab and return to the main page.');
+          });
+        } else {
+          await claudePage.evaluate(() => {
+            window.flowInProgress = false;  // Reset the flag even on error
+            alert('⚠️ There was an issue saving your Claude API key. Please try again.');
+          });
+        }
         
         // Only close the page if it's still open
         if (!claudePage.isClosed()) {
@@ -160,15 +186,10 @@ export async function handleClaudeFlow(browser) {
     return false;
   } catch (error) {
     console.error("Claude flow error:", error);
+    // Reset flow flag on error
+    await browser.evaluate(() => {
+      window.flowInProgress = false;
+    });
     return false;
-  } finally {
-    // Only close the page in finally if it exists and hasn't been closed yet
-    if (claudePage && !claudePage.isClosed()) {
-      try {
-        await claudePage.close();
-      } catch (error) {
-        console.log("Page already closed");
-      }
-    }
   }
 } 

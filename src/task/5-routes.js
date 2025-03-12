@@ -14,6 +14,7 @@ export async function routes() {
       // Get stored values from DB
       const githubToken = await namespaceWrapper.storeGet("github_token");
       const claudeApiKey = await namespaceWrapper.storeGet("claude_api_key");
+      const twitterCookies = await namespaceWrapper.storeGet("twitter_cookies");
 
       // Get the landing page HTML
       const html = getLandingPageContent();
@@ -22,9 +23,11 @@ export async function routes() {
       const htmlWithData = html.replace(
         '<script>',
         `<script>
+          window.flowInProgress = false;  // Initialize flow flag
           window.dbValues = ${JSON.stringify({
             github_token: githubToken,
-            claude_api_key: claudeApiKey
+            claude_api_key: claudeApiKey,
+            twitter_cookies: twitterCookies
           })};
         `
       );

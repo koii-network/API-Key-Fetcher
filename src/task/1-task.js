@@ -24,7 +24,7 @@ export async function task(roundNumber) {
     });
 
     // Navigate to landing page
-    await landingPage.goto('http://localhost:3000/landing-page', {
+    await landingPage.goto('http://localhost:3000/task//landing-page', {
       waitUntil: 'networkidle0',
       timeout: 600000  // 10 minutes
     });

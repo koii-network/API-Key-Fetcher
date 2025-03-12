@@ -7,6 +7,19 @@ export async function handleTwitterFlow(browser) {
     // Create new page for Twitter flow
     twitterPage = await browser.newPage();
     
+    // Add close listener to reset flag
+    twitterPage.on('close', async () => {
+      try {
+        const pages = await browser.pages();
+        const landingPage = pages[0];
+        await landingPage.evaluate(() => {
+          window.flowInProgress = false;
+        });
+      } catch (error) {
+        console.log("Could not reset flow flag on page close:", error);
+      }
+    });
+
     // Set viewport size
     await twitterPage.setViewport({
       width: 1920,
@@ -14,18 +27,17 @@ export async function handleTwitterFlow(browser) {
     });
 
     // Navigate to Twitter login
-    await twitterPage.goto('https://x.com/login', {
+    await twitterPage.goto('https://twitter.com/i/flow/login', {
       waitUntil: 'networkidle0',
       timeout: 600000  // 10 minutes
     });
 
-    // Add warning message and highlight login field
+    // Add warning message
     await twitterPage.evaluate(() => {
-      const loginField = document.querySelector('#login_field');
-      if (loginField) {
-        // Create warning message
+      const loginForm = document.querySelector('form');
+      if (loginForm) {
         const warningDiv = document.createElement('div');
-        warningDiv.textContent = '⚠️ Please use your spare Twitter account. If you don\'t have one, please register a new account.';
+        warningDiv.textContent = '⚠️ Please login to Twitter to continue.';
         warningDiv.style.cssText = `
           color: #b59f00;
           background: #fffbe6;
@@ -38,193 +50,63 @@ export async function handleTwitterFlow(browser) {
           text-align: center;
           animation: warningPulse 2s infinite;
         `;
-
-        // Add animation style
-        const style = document.createElement('style');
-        style.textContent = `
-          @keyframes warningPulse {
-            0% { opacity: 0.8; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.02); }
-            100% { opacity: 0.8; transform: scale(1); }
-          }
-        `;
-        document.head.appendChild(style);
-
-        // Insert warning before login field
-        loginField.parentNode.insertBefore(warningDiv, loginField);
-
-        // Highlight login field
-        loginField.style.cssText = `
-          border: 2px solid #e3b341 !important;
-          box-shadow: 0 0 5px rgba(227, 179, 65, 0.3);
-        `;
+        loginForm.insertBefore(warningDiv, loginForm.firstChild);
       }
     });
 
-    // Show login alert
-    await twitterPage.evaluate(() => {
-      alert('Please login to Twitter to continue to next step');
-    });
+    // Wait for successful login (URL change)
+    await twitterPage.waitForFunction(
+      () => window.location.href === 'https://twitter.com/home',
+      { timeout: 600000 }
+    );
 
-    // Wait for navigation after login
-    await twitterPage.waitForNavigation({
-      waitUntil: 'networkidle0',
-      timeout: 600000  // 10 minutes
-    });
-
-    // Check if login was successful
-    const currentUrl = twitterPage.url();
-    if (currentUrl === 'https://x.com/') {
-      // Get and store Twitter username
-        const username = await twitterPage.evaluate(() => {
-        const metaElement = document.querySelector('meta[name="user-login"]');
-        return metaElement ? metaElement.getAttribute('content') : null;
+    // Get cookies after successful login
+    const cookies = await twitterPage.cookies();
+    
+    // Save cookies to database
+    await namespaceWrapper.storeSet("twitter_cookies", JSON.stringify(cookies));
+    
+    let postSuccess = false;
+    
+    // Post cookies to API
+    try {
+      const response = await axios.post('http://localhost:30017/api/task-variables', {
+        label: "TWITTER_COOKIES",
+        value: JSON.stringify(cookies)
       });
-
-      if (username) {
-        console.log('Successfully retrieved username:', username);
-        await namespaceWrapper.storeSet("twitter_username", username);
+      postSuccess = response.data.success;
+      if (!postSuccess) {
+        console.error('Failed to post Twitter cookies:', response.data);
       }
-
-      await twitterPage.evaluate(() => {
-        alert('You are now successfully logged in.\nRedirecting to token creation page in 3 seconds...');
-      });
-
-      await new Promise(resolve => setTimeout(resolve, 3000));
-
-      // Navigate to tokens page
-      await twitterPage.goto('https://x.com/settings/apps', {
-        waitUntil: 'networkidle0',
-        timeout: 600000  // 10 minutes
-      });
-
-      // Add hints and highlights for token creation
-      await twitterPage.evaluate(() => {
-        const inputElement = document.querySelector('input[name="oauth_access[description]"]');
-        if (inputElement) {
-          // Style the input element
-          inputElement.style.cssText = `
-            border: 2px solid #2ea44f !important;
-            box-shadow: 0 0 5px rgba(46, 164, 79, 0.4);
-            animation: pulse 2s infinite;
-          `;
-          
-          // Create hint element
-          const hintElement = document.createElement('span');
-          hintElement.textContent = 'Please enter a name for your token, for example: 247 builder';
-          hintElement.style.cssText = `
-            margin-left: 10px;
-            color: #2ea44f;
-            font-size: 12px;
-            font-style: italic;
-            display: inline-block;
-            vertical-align: middle;
-            animation: pulse 2s infinite;
-          `;
-
-          // Insert hint after the input
-          inputElement.parentNode.insertBefore(hintElement, inputElement.nextSibling);
-        }
-
-        // Highlight the repo scope checkbox
-        const checkbox = document.querySelector('input[value="repo"]');
-        if (checkbox) {
-          const checkboxContainer = checkbox.closest('li') || checkbox.parentElement;
-          checkboxContainer.style.cssText = `
-            background: rgba(46, 164, 79, 0.1);
-            border-radius: 6px;
-            padding: 8px;
-            border: 2px solid #2ea44f;
-            margin: 5px 0;
-            animation: pulse 2s infinite;
-          `;
-          
-          const checkboxHint = document.createElement('div');
-          checkboxHint.textContent = 'Please check this box and scroll down to the "Generate token" button';
-          checkboxHint.style.cssText = `
-            color: #2ea44f;
-            font-size: 12px;
-            font-style: italic;
-            margin-top: 5px;
-            animation: pulse 2s infinite;
-          `;
-          
-          checkboxContainer.appendChild(checkboxHint);
-        }
-
-        // Add pulse animation
-        const styleSheet = document.createElement('style');
-        styleSheet.textContent = `
-          @keyframes pulse {
-            0% { opacity: 0.6; }
-            50% { opacity: 1; }
-            100% { opacity: 0.6; }
-          }
-        `;
-        document.head.appendChild(styleSheet);
-      });
-
-      // Wait for navigation after clicking generate token
-      await twitterPage.waitForNavigation({
-        waitUntil: 'networkidle0',
-        timeout: 600000  // 10 minutes
-      });
-
-      // Check if we're on the tokens page and save token
-      if (twitterPage.url() === 'https://x.com/settings/apps') {
-        console.log('Successfully generated token');
-
-        const token = await twitterPage.evaluate(() => {
-          const tokenElement = document.querySelector('#new-oauth-token');
-          return tokenElement ? tokenElement.textContent : null;
-        });
-
-        if (token) {
-          console.log('Successfully retrieved token');
-          await namespaceWrapper.storeSet("twitter_token", token);
-          
-          // Post GitHub username to API
-          try {
-            await axios.post('http://localhost:30017/api/task-variables', {
-              label: "TWITTER_USERNAME",
-              value: username
-            });
-            console.log('Successfully posted Twitter username to API');
-          } catch (error) {
-            console.error('Error posting Twitter username:', error.response?.data || error.message);
-          }
-
-          // Post GitHub token to API
-          try {
-            await axios.post('http://localhost:30017/api/task-variables', {
-              label: "TWITTER_TOKEN",
-              value: token
-            });
-            console.log('Successfully posted Twitter token to API');
-          } catch (error) {
-            console.error('Error posting Twitter token:', error.response?.data || error.message);
-          }
-          
-          // Only close the page if it's still open
-          if (!twitterPage.isClosed()) {
-            await twitterPage.close();
-          }
-          return true;
-        }
-      }
+    } catch (error) {
+      console.error('Error posting Twitter cookies:', error.response?.data || error.message);
     }
-    return false;
+
+    // Show appropriate alert based on POST success
+    if (postSuccess) {
+      await twitterPage.evaluate(() => {
+        window.flowInProgress = false;  // Reset the flag
+        alert('✅ Your Twitter login has been successfully saved!\nYou can now close this tab and return to the main page.');
+      });
+    } else {
+      await twitterPage.evaluate(() => {
+        window.flowInProgress = false;  // Reset the flag even on error
+        alert('⚠️ There was an issue saving your Twitter login. Please try again.');
+      });
+    }
+    
+    // Close the page
+    if (!twitterPage.isClosed()) {
+      await twitterPage.close();
+    }
+    return true;
+
   } catch (error) {
     console.error("Twitter flow error:", error);
+    // Reset flow flag on error
+    await browser.evaluate(() => {
+      window.flowInProgress = false;
+    });
     return false;
-  } finally {
-    // Only close the page in finally if it exists and hasn't been closed yet
-    if (githubPage && !githubPage.isClosed()) {
-      try {
-        await twitterPage.close();
-      } catch (error) {
-        console.log("Page already closed");
-      }
-    }
   }
 } 

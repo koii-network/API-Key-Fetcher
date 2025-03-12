@@ -93,30 +93,17 @@ export function getLandingPageContent() {
           </div>
         </div>
         <script>
-          // Add flag to track if a flow is in progress
+          // Initialize flags
           window.flowInProgress = false;
+          window.githubClicked = false;
+          window.claudeClicked = false;
+          window.twitterClicked = false;
+          window.lastClickedCard = undefined;
 
-          // Function to check completion status from window.dbValues
-          function checkCompletionStatus() {
-            if (window.dbValues) {
-              // Check GitHub completion
-              if (window.dbValues.github_token) {
-                document.getElementById('github-card').classList.add('completed');
-              }
-              
-              // Check Claude completion
-              if (window.dbValues.claude_api_key) {
-                document.getElementById('anthropic-card').classList.add('completed');
-              }
-            }
-          }
-
-          // Check completion status on load
-          checkCompletionStatus();
-
-          // Add click handlers
           document.querySelectorAll('.card').forEach(card => {
             card.addEventListener('click', () => {
+              console.log('Card clicked:', card.id); // Add logging
+
               // Check if a flow is already in progress
               if (window.flowInProgress) {
                 alert('⚠️ Please finish the ongoing flow first before starting another one.');
@@ -127,12 +114,15 @@ export function getLandingPageContent() {
               window.githubClicked = false;
               window.claudeClicked = false;
               window.twitterClicked = false;
+              window.lastClickedCard = undefined;
 
               if (card.id === 'github-card') {
+                console.log('Setting GitHub flags'); // Add logging
                 window.githubClicked = true;
                 window.lastClickedCard = 'github';
                 window.flowInProgress = true;
               } else if (card.id === 'anthropic-card') {
+                console.log('Setting Claude flags'); // Add logging
                 window.claudeClicked = true;
                 window.lastClickedCard = 'claude';
                 window.flowInProgress = true;

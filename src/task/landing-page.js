@@ -2,22 +2,75 @@ export function getLandingPageContent() {
   return `
     <html>
       <head>
+        <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;700&display=swap" rel="stylesheet">
         <style>
           body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
             padding: 40px;
-            background: #f6f8fa;
+            background: var(--Node-Gradient, linear-gradient(180deg, #030332 0%, #454580 131.81%));
+            min-height: 100vh;
+            margin: 0;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
           }
-          h1 {
+          .heading {
+            color: rgba(255, 255, 255, 0.80);
             text-align: center;
-            color: #24292e;
+            font-family: 'Sora', sans-serif;
+            font-size: 32px;
+            font-style: normal;
+            font-weight: 700;
+            line-height: 150%;
+            letter-spacing: -0.352px;
+            margin-bottom: 8px;
+          }
+          .sub-heading {
+            color: rgba(255, 255, 255, 0.80);
+            text-align: center;
+            font-family: 'Sora', sans-serif;
+            font-size: 18px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: 150%;
+            letter-spacing: -0.352px;
             margin-bottom: 40px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+          }
+          .sub-heading .small-text {
+            font-size: 16px;
+            display: block;
+          }
+          .section {
+            margin-bottom: 40px;
+            padding: 0 40px;
+          }
+          .section-title {
+            color: rgba(255, 255, 255, 0.80);
+            font-family: 'Sora', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            line-height: 150%;
+            margin-bottom: 8px;
+            text-align: left;
+          }
+          .section-description {
+            color: rgba(255, 255, 255, 0.80);
+            font-family: 'Sora', sans-serif;
+            font-size: 16px;
+            font-weight: 400;
+            line-height: 150%;
+            text-align: left;
+            margin-bottom: 24px;
           }
           .cards-container {
             display: flex;
-            justify-content: center;
+            justify-content: flex-start;
             gap: 30px;
             flex-wrap: wrap;
+            margin-bottom: 40px;
           }
           .card {
             background: white;
@@ -74,62 +127,68 @@ export function getLandingPageContent() {
         </style>
       </head>
       <body>
-        <h1>Choose which task variable you want to get</h1>
-        <div class="cards-container">
-          <div class="card" id="github-card">
-            <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub">
-            <h2>GitHub Info</h2>
-            <p>Get your GitHub access token for API access</p>
-          </div>
-          <div class="card" id="anthropic-card">
-            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MCA1MCI+PHBhdGggZD0iTTI1IDJDMTIuMyAyIDIgMTIuMyAyIDI1czEwLjMgMjMgMjMgMjMgMjMtMTAuMyAyMy0yM1MzNy43IDIgMjUgMnptMCA0MmMtMTAuNSAwLTE5LTguNS0xOS0xOVMxNC41IDYgMjUgNnMxOSA4LjUgMTkgMTktOC41IDE5LTE5IDE5eiIvPjwvc3ZnPg==" alt="Anthropic">
-            <h2>Anthropic API Key</h2>
-            <p>Get your Claude API access credentials</p>
-          </div>
-          <div class="card" id="twitter-card">
-            <img src="https://abs.twimg.com/responsive-web/client-web/icon-svg.168b89d5.svg" alt="Twitter">
-            <h2>Twitter Info</h2>
-            <p>Get your Twitter API credentials</p>
+        <h1 class="heading">Become a Super Contributor</h1>
+        <p class="sub-heading">
+          Earn more rewards when you connect additional services to your Koii account.
+          <span class="small-text">Prometheus requires at least one Github Account and one AI Agent to operate.</span>
+        </p>
+        
+        <div class="section">
+          <h2 class="section-title">Free Accounts</h2>
+          <p class="section-description">Connect popular tools to complete more tasks and participate in governance.</p>
+          <div class="cards-container">
+            <div class="card" id="github-card" data-type="github">
+              <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub">
+              <h2>GitHub Info</h2>
+              <p>Get your GitHub access token for API access</p>
+            </div>
           </div>
         </div>
+
+        <div class="section">
+          <h2 class="section-title">Paid Accounts</h2>
+          <p class="section-description">Some tasks require paid subscriptions, and often have greater rewards.</p>
+          <div class="cards-container">
+            <div class="card" id="anthropic-card" data-type="claude">
+              <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MCA1MCI+PHBhdGggZD0iTTI1IDJDMTIuMyAyIDIgMTIuMyAyIDI1czEwLjMgMjMgMjMgMjMgMjMtMTAuMyAyMy0yM1MzNy43IDIgMjUgMnptMCA0MmMtMTAuNSAwLTE5LTguNS0xOS0xOVMxNC41IDYgMjUgNnMxOSA4LjUgMTkgMTktOC41IDE5LTE5IDE5eiIvPjwvc3ZnPg==" alt="Anthropic">
+              <h2>Anthropic API Key</h2>
+              <p>Get your Claude API access credentials</p>
+            </div>
+          </div>
+        </div>
+
         <script>
-          // Initialize flags
-          window.flowInProgress = false;
-          window.githubClicked = false;
-          window.claudeClicked = false;
-          window.twitterClicked = false;
-          window.lastClickedCard = undefined;
+          let flowState = {
+            inProgress: false,
+            selectedCard: null
+          };
 
+          function handleCardClick(event) {
+            const card = event.currentTarget;
+            
+            if (flowState.inProgress) {
+              alert('⚠️ Please finish the ongoing flow first before starting another one.');
+              return;
+            }
+
+            flowState = {
+              inProgress: true,
+              selectedCard: card.dataset.type
+            };
+          }
+
+          // Add event listeners
           document.querySelectorAll('.card').forEach(card => {
-            card.addEventListener('click', () => {
-              console.log('Card clicked:', card.id); // Add logging
+            card.addEventListener('click', handleCardClick);
+          });
 
-              // Check if a flow is already in progress
-              if (window.flowInProgress) {
-                alert('⚠️ Please finish the ongoing flow first before starting another one.');
-                return;
-              }
-
-              // Reset all flags before setting new one
-              window.githubClicked = false;
-              window.claudeClicked = false;
-              window.twitterClicked = false;
-              window.lastClickedCard = undefined;
-
-              if (card.id === 'github-card') {
-                console.log('Setting GitHub flags'); // Add logging
-                window.githubClicked = true;
-                window.lastClickedCard = 'github';
-                window.flowInProgress = true;
-              } else if (card.id === 'anthropic-card') {
-                console.log('Setting Claude flags'); // Add logging
-                window.claudeClicked = true;
-                window.lastClickedCard = 'claude';
-                window.flowInProgress = true;
-              } else if (card.id === 'twitter-card') {
-                alert('Twitter API setup coming soon!');
-              }
-            });
+          // Expose only what's needed for the task manager
+          Object.defineProperty(window, 'lastClickedCard', {
+            get: () => flowState.selectedCard,
+            set: (value) => {
+              flowState.selectedCard = value;
+              flowState.inProgress = value !== undefined;
+            }
           });
         </script>
       </body>

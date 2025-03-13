@@ -317,6 +317,51 @@ export async function handleClaudeFlow(browser) {
             addButton.disabled = false;
             addButton.removeAttribute("disabled");
 
+            // Add step indicator for Add button
+            const hintElement = document.createElement("div");
+            hintElement.innerHTML = `
+              <div style="
+                position: absolute;
+                left: calc(100% + 20px);
+                top: 50%;
+                transform: translateY(-50%);
+                background: rgba(255, 255, 255, 0.9);
+                border-radius: 4px;
+                padding: 5px 12px;
+                box-shadow: 0 0 20px rgba(255, 255, 255, 0.4),
+                            0 0 40px rgba(255, 255, 255, 0.2),
+                            0 0 60px rgba(134, 255, 226, 0.2),
+                            0 0 80px rgba(134, 255, 226, 0.1);
+                font-family: system-ui, -apple-system, sans-serif;
+                width: max-content;
+                z-index: 1000;
+              ">
+                <div style="
+                  position: absolute;
+                  left: -8px;
+                  top: 50%;
+                  transform: translateY(-50%);
+                  width: 0;
+                  height: 0;
+                  border-top: 8px solid transparent;
+                  border-bottom: 8px solid transparent;
+                  border-right: 8px solid rgba(255, 255, 255, 0.9);
+                "></div>
+                <div style="
+                  color: #41465D;
+                  font-weight: 700;
+                  font-size: 12px;
+                  margin-bottom: 1px;
+                ">Step 5</div>
+                <div style="
+                  color: #41465D;
+                  font-weight: 500;
+                  font-size: 12px;
+                ">Click Add to create your API key</div>
+              </div>
+            `;
+            addButton.style.position = "relative";
+            addButton.appendChild(hintElement);
           }
         }
       });

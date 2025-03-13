@@ -160,12 +160,26 @@ export function getLandingPageContent(namespaceWrapper) {
             display: flex;
             align-items: center;
             border-radius: 10px;
-            border: 1px solid rgba(229, 229, 229, 0.00);
             background: rgba(137, 137, 199, 0.15);
-            display: inline-flex;
             padding: 12px;
-            align-items: flex-start;
             gap: 10px;
+            border: none;
+          }
+          
+          .secure-footer::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 100%;
+            border-radius: 10px;
+            border-bottom: 1px solid rgba(229, 229, 229, 0.8);
+            border-left: 1px solid rgba(229, 229, 229, 0.8);
+            border-right: 1px solid rgba(229, 229, 229, 0.8);
+            mask-image: linear-gradient(to top, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 100%);
+            -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 100%);
+            pointer-events: none;
           }
           
           .secure-footer .text {

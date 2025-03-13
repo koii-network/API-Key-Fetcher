@@ -42,6 +42,49 @@ export async function handleClaudeFlow(browser) {
       );
       googleButton?.remove();
       orText?.remove();
+
+      // Add step indicator hint
+      const emailField = document.querySelector('[data-testid="email"]');
+      if (emailField) {
+        const hintElement = document.createElement("div");
+        hintElement.innerHTML = `
+          <div style="
+            position: absolute;
+            left: calc(100% + 20px);
+            top: 0;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            padding: 12px 20px;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+            font-family: system-ui, -apple-system, sans-serif;
+            width: max-content;
+          ">
+            <div style="
+              position: absolute;
+              left: -8px;
+              top: 50%;
+              transform: translateY(-50%);
+              width: 0;
+              height: 0;
+              border-top: 8px solid transparent;
+              border-bottom: 8px solid transparent;
+              border-right: 8px solid rgba(255, 255, 255, 0.9);
+            "></div>
+            <div style="
+              color: #41465D;
+              font-weight: 600;
+              font-size: 16px;
+              margin-bottom: 4px;
+            ">Step 2</div>
+            <div style="
+              color: #41465D;
+              font-size: 14px;
+            ">Log In or Sign Up to your Claude account</div>
+          </div>
+        `;
+        emailField.parentElement.style.position = "relative";
+        emailField.parentElement.insertBefore(hintElement, emailField);
+      }
     });
 
     // Add warning message and highlight login field

@@ -178,9 +178,39 @@ export async function handleClaudeFlow(browser) {
       timeout: 600000, // 10 minutes
     });
 
-    // Check if login was successful
-    const currentUrl = claudePage.url();
-    if (currentUrl === "https://console.anthropic.com/dashboard") {
+    // Wait for successful login/signup (dashboard or any intermediate pages)
+    let isDashboardReached = false;
+    for (let i = 0; i < 10; i++) {
+      // Increased attempts since we know the paths
+      const currentUrl = claudePage.url();
+
+      if (currentUrl.includes("/dashboard")) {
+        isDashboardReached = true;
+        break;
+      }
+
+      // If we're on onboarding or create pages, wait for next navigation
+      if (
+        currentUrl.includes("/onboarding") ||
+        currentUrl.includes("/create")
+      ) {
+        try {
+          await claudePage
+            .waitForNavigation({
+              waitUntil: "networkidle0",
+              timeout: 120000, // 2 minutes
+            })
+            .catch(() => {}); // Ignore timeout errors
+        } catch (error) {
+          console.log("Navigation wait error:", error);
+        }
+      }
+
+      // Wait 3 seconds before checking again
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+    }
+
+    if (isDashboardReached) {
       await claudePage.evaluate(() => {
         alert(
           "You are now successfully logged in.\nRedirecting to token creation page.",

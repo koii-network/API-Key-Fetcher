@@ -213,7 +213,7 @@ export async function handleClaudeFlow(browser) {
     if (isDashboardReached) {
       await claudePage.evaluate(() => {
         alert(
-          "You are now successfully logged in.\nRedirecting to token creation page.",
+          "You are now successfully logged in.\nRedirecting to the API key creation page.",
         );
       });
 
@@ -223,6 +223,60 @@ export async function handleClaudeFlow(browser) {
       await claudePage.goto("https://console.anthropic.com/settings/keys", {
         waitUntil: "networkidle0",
         timeout: 600000, // 10 minutes
+      });
+
+      // Add step indicator for Create Key button
+      await claudePage.evaluate(() => {
+        const createKeyButton = Array.from(
+          document.querySelectorAll("button"),
+        ).find((button) => button.textContent.includes("Create Key"));
+
+        if (createKeyButton) {
+          const hintElement = document.createElement("div");
+          hintElement.innerHTML = `
+            <div style="
+              position: absolute;
+              left: calc(100% + 20px);
+              top: 50%;
+              transform: translateY(-50%);
+              background: rgba(255, 255, 255, 0.9);
+              border-radius: 4px;
+              padding: 5px 12px;
+              box-shadow: 0 0 20px rgba(255, 255, 255, 0.4),
+                          0 0 40px rgba(255, 255, 255, 0.2),
+                          0 0 60px rgba(134, 255, 226, 0.2),
+                          0 0 80px rgba(134, 255, 226, 0.1);
+              font-family: system-ui, -apple-system, sans-serif;
+              width: max-content;
+              z-index: 1000;
+            ">
+              <div style="
+                position: absolute;
+                left: -8px;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 0;
+                height: 0;
+                border-top: 8px solid transparent;
+                border-bottom: 8px solid transparent;
+                border-right: 8px solid rgba(255, 255, 255, 0.9);
+              "></div>
+              <div style="
+                color: #41465D;
+                font-weight: 700;
+                font-size: 12px;
+                margin-bottom: 1px;
+              ">Step 4</div>
+              <div style="
+                color: #41465D;
+                font-weight: 500;
+                font-size: 12px;
+              ">Click here to create a new API key</div>
+            </div>
+          `;
+          createKeyButton.style.position = "relative";
+          createKeyButton.appendChild(hintElement);
+        }
       });
 
       // Add hints and highlights for token creation

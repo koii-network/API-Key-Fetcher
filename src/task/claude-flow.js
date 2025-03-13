@@ -40,8 +40,10 @@ export async function handleClaudeFlow(browser) {
       const orText = Array.from(document.getElementsByTagName("p")).find(
         (p) => p.textContent.trim() === "Or",
       );
-      googleButton?.remove();
-      orText?.remove();
+
+      // Hide elements instead of removing them
+      if (googleButton) googleButton.style.display = "none";
+      if (orText) orText.style.display = "none";
 
       // Add step indicator hint
       const emailField = document.querySelector('[data-testid="email"]');

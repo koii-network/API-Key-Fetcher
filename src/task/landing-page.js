@@ -79,6 +79,7 @@ export function getLandingPageContent(namespaceWrapper) {
             border-radius: 10px;
             padding: 20px;
             width: 300px;
+            height: 75px;
             cursor: pointer;
             transition: all 0.2s;
             display: flex;
@@ -240,6 +241,7 @@ export function getLandingPageContent(namespaceWrapper) {
           <h2 class="section-title">Paid Accounts</h2>
           <p class="section-description">Some tasks require paid subscriptions, and often have greater rewards.</p>
           <div class="cards-container">
+          <div  style="display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 8px;">
             <div class="card" id="anthropic-card" data-type="claude">
               <div class="card-icon">
                 <svg width="67" height="46" viewBox="0 0 67 46" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -258,6 +260,8 @@ export function getLandingPageContent(namespaceWrapper) {
                 <p>Connect Anthropic's AI Agent to build apps.</p>
               </div>
             </div>
+            <div style="width: 241px; height: 30px; text-align: center; color: #FFC78F; font-size: 12px; font-family: Sora; font-weight: 400; line-height: 18px; word-wrap: break-word">*Mandatory for Prometheus Task</div>
+          </div>
 
             <div class="card disabled" id="chatgpt-card">
               <div class="card-icon">

@@ -91,22 +91,6 @@ export async function handleClaudeFlow(browser) {
     await claudePage.evaluate(() => {
       const loginButton = document.querySelector('[data-testid="email"]');
       if (loginButton) {
-        // Create warning message
-        const warningDiv = document.createElement("div");
-        warningDiv.textContent = "⚠️ Please login to anthropic console.";
-        warningDiv.style.cssText = `
-          color: #b59f00;
-          background: #fffbe6;
-          border: 1px solid #fff5c1;
-          border-radius: 6px;
-          font-size: 14px;
-          font-weight: 600;
-          margin-bottom: 15px;
-          padding: 8px 12px;
-          text-align: center;
-          animation: warningPulse 2s infinite;
-        `;
-
         // Add animation style
         const style = document.createElement("style");
         style.textContent = `
@@ -117,9 +101,6 @@ export async function handleClaudeFlow(browser) {
           }
         `;
         document.head.appendChild(style);
-
-        // Insert warning before login button
-        loginButton.parentNode.insertBefore(warningDiv, loginButton);
 
         // Highlight login button
         loginButton.style.cssText = `

@@ -45,7 +45,7 @@ export async function handleClaudeFlow(browser) {
       if (googleButton) googleButton.style.display = "none";
       if (orText) orText.style.display = "none";
 
-      // Add step indicator hint
+      // Add step indicator hint for email field
       const emailField = document.querySelector('[data-testid="email"]');
       if (emailField) {
         const hintElement = document.createElement("div");
@@ -117,7 +117,60 @@ export async function handleClaudeFlow(browser) {
       }
     });
 
-    // Wait for navigation after login
+    // Wait for the verification code input to appear
+    await claudePage.waitForSelector("#code", {
+      timeout: 600000, // 10 minutes
+    });
+
+    await claudePage.evaluate(() => {
+      // Add step indicator hint for verification code field
+      const codeField = document.querySelector("#code");
+      if (codeField) {
+        const hintElement = document.createElement("div");
+        hintElement.innerHTML = `
+          <div style="
+            position: absolute;
+            left: calc(100% + 20px);
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 4px;
+            padding: 5px 12px;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.4),
+                        0 0 40px rgba(255, 255, 255, 0.2),
+                        0 0 60px rgba(134, 255, 226, 0.2),
+                        0 0 80px rgba(134, 255, 226, 0.1);
+            font-family: system-ui, -apple-system, sans-serif;
+            width: max-content;
+          ">
+            <div style="
+              position: absolute;
+              left: -8px;
+              top: 50%;
+              transform: translateY(-50%);
+              width: 0;
+              height: 0;
+              border-top: 8px solid transparent;
+              border-bottom: 8px solid transparent;
+              border-right: 8px solid rgba(255, 255, 255, 0.9);
+            "></div>
+            <div style="
+              color: #41465D;
+              font-weight: 700;
+              font-size: 12px;
+              margin-bottom: 1px;
+            ">Step 3</div>
+            <div style="
+              color: #41465D;
+              font-weight: 500;
+              font-size: 12px;
+            ">Enter the verification code sent to your email</div>
+          </div>
+        `;
+        codeField.parentElement.style.position = "relative";
+        codeField.parentElement.insertBefore(hintElement, codeField);
+      }
+    });
+
+    // Wait for second navigation (to verification code page)
     await claudePage.waitForNavigation({
       waitUntil: "networkidle0",
       timeout: 600000, // 10 minutes

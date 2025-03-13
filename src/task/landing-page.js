@@ -115,7 +115,7 @@ export function getLandingPageContent(namespaceWrapper) {
             position: absolute;
             top: 16px;
             right: 16px;
-            color: var(--Green-1, #49CE8B);
+            color: var(--Green-1, #9BE7C4);
             font-size: 20px;
             font-weight: bold;
           }
@@ -196,7 +196,7 @@ export function getLandingPageContent(namespaceWrapper) {
           
           .card.completed .card-content h2,
           .card.completed .card-content p {
-            color: var(--Green-1, #49CE8B);
+            color: var(--Green-1, #9BE7C4);
           }
         </style>
       </head>

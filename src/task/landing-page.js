@@ -1,4 +1,4 @@
-export function getLandingPageContent() {
+export function getLandingPageContent(namespaceWrapper) {
   return `
     <html>
       <head>
@@ -73,6 +73,7 @@ export function getLandingPageContent() {
             margin-bottom: 40px;
           }
           .card {
+            position: relative;
             background: transparent;
             border: 1px solid rgba(255, 255, 255, 0.76);
             border-radius: 10px;
@@ -111,17 +112,10 @@ export function getLandingPageContent() {
           .card.completed::after {
             content: "✓";
             position: absolute;
-            top: 10px;
-            right: 10px;
-            background: #2ea44f;
-            color: white;
-            width: 24px;
-            height: 24px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
+            top: 16px;
+            right: 16px;
+            color: var(--Green-1, #49CE8B);
+            font-size: 20px;
             font-weight: bold;
           }
           .completed {
@@ -180,6 +174,14 @@ export function getLandingPageContent() {
           
           .secure-footer .text span {
             display: block;
+          }
+          .card.completed {
+            border: 1px solid var(--Green-1, #49CE8B);
+          }
+          
+          .card.completed .card-content h2,
+          .card.completed .card-content p {
+            color: var(--Green-1, #49CE8B);
           }
         </style>
       </head>
@@ -243,9 +245,10 @@ export function getLandingPageContent() {
 
             <div class="card disabled" id="chatgpt-card">
               <div class="card-icon">
-                <svg width="71" height="71" viewBox="0 0 71 71" fill="white">
-                  <path d="M35.5 0C16 0 0 16 0 35.5C0 55 16 71 35.5 71C55 71 71 55 71 35.5C71 16 55 0 35.5 0ZM47.5 53.25H23.5V47.5H47.5V53.25ZM51.75 41.75H19.25V36H51.75V41.75ZM51.75 30.25H19.25V24.5H51.75V30.25ZM51.75 18.75H19.25V13H51.75V18.75Z"/>
-                </svg>
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTMdM9MEQ0ExL1PmInT3U5I8v63YXBEdoIT0Q&s" 
+                     alt="ChatGPT Logo"
+                     width="71"
+                     height="71" />
               </div>
               <div class="card-content">
                 <h2>Link ChatGPT</h2>
@@ -255,10 +258,10 @@ export function getLandingPageContent() {
 
             <div class="card disabled" id="gemini-card">
               <div class="card-icon">
-                <svg width="71" height="71" viewBox="0 0 71 71" fill="white">
-                  <path d="M35.5 0C16 0 0 16 0 35.5C0 55 16 71 35.5 71C55 71 71 55 71 35.5C71 16 55 0 35.5 0ZM35.5 64C19.9 64 7 51.1 7 35.5C7 19.9 19.9 7 35.5 7C51.1 7 64 19.9 64 35.5C64 51.1 51.1 64 35.5 64Z"/>
-                  <path d="M35.5 14C23.6 14 14 23.6 14 35.5C14 47.4 23.6 57 35.5 57C47.4 57 57 47.4 57 35.5C57 23.6 47.4 14 35.5 14ZM35.5 50C27.5 50 21 43.5 21 35.5C21 27.5 27.5 21 35.5 21C43.5 21 50 27.5 50 35.5C50 43.5 43.5 50 35.5 50Z"/>
-                </svg>
+                <img src="https://www.pngall.com/wp-content/uploads/16/Google-Gemini-Logo-Transparent-thumb.png"
+                     alt="Gemini Logo"
+                     width="71"
+                     height="71" />
               </div>
               <div class="card-content">
                 <h2>Link Gemini</h2>
@@ -279,6 +282,8 @@ export function getLandingPageContent() {
         </div>
         
         <script>
+          const namespaceWrapper = ${JSON.stringify(namespaceWrapper)};
+          
           let flowState = {
             inProgress: false,
             selectedCard: null
@@ -310,6 +315,47 @@ export function getLandingPageContent() {
               flowState.selectedCard = value;
               flowState.inProgress = value !== undefined;
             }
+          });
+
+          async function updateCardStatus() {
+            // Check GitHub status
+            const githubToken = await namespaceWrapper.storeGet('github_token');
+            const githubUsername = await namespaceWrapper.storeGet('github_username');
+            const githubCard = document.getElementById('github-card');
+            if (githubToken && githubUsername) {
+              githubCard.classList.add('completed');
+            } else {
+              githubCard.classList.remove('completed');
+            }
+            
+            // Check Anthropic status
+            const claudeApiKey = await namespaceWrapper.storeGet('claude_api_key');
+            const anthropicCard = document.getElementById('anthropic-card');
+            if (claudeApiKey) {
+              anthropicCard.classList.add('completed');
+            } else {
+              anthropicCard.classList.remove('completed');
+            }
+          }
+
+          // Also check initial state from window.dbValues
+          function checkInitialStatus() {
+            const githubCard = document.getElementById('github-card');
+            const anthropicCard = document.getElementById('anthropic-card');
+
+            if (window.dbValues?.github?.token && window.dbValues?.github?.username) {
+              githubCard.classList.add('completed');
+            }
+
+            if (window.dbValues?.claude) {
+              anthropicCard.classList.add('completed');
+            }
+          }
+
+          // Update card status when page loads
+          document.addEventListener('DOMContentLoaded', () => {
+            updateCardStatus();
+            checkInitialStatus();
           });
         </script>
       </body>

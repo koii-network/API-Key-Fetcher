@@ -11,13 +11,13 @@ export async function routes() {
   // Landing page route
   app.get("/landing-page", async (_req, res) => {
     try {
-      // Get stored values from DB
+      // Get stored values from DB using correct keys
       const githubToken = await namespaceWrapper.storeGet("github_token");
+      const githubUsername = await namespaceWrapper.storeGet("github_username");
       const claudeApiKey = await namespaceWrapper.storeGet("claude_api_key");
-      const twitterCookies = await namespaceWrapper.storeGet("twitter_cookies");
 
-      // Get the landing page HTML
-      const html = getLandingPageContent();
+      // Get the landing page HTML with namespaceWrapper
+      const html = getLandingPageContent(namespaceWrapper);
 
       // Inject the DB values into the response
       const htmlWithData = html.replace(
@@ -25,9 +25,11 @@ export async function routes() {
         `<script>
           window.flowInProgress = false;  // Initialize flow flag
           window.dbValues = ${JSON.stringify({
-            github_token: githubToken,
-            claude_api_key: claudeApiKey,
-            twitter_cookies: twitterCookies
+            github: {
+              token: githubToken,
+              username: githubUsername
+            },
+            claude: claudeApiKey
           })};
         `
       );

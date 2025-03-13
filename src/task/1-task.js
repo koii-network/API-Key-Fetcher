@@ -2,6 +2,7 @@ import { namespaceWrapper } from "@_koii/task-manager/namespace-wrapper";
 import puppeteer from 'puppeteer';
 import { handleGitHubFlow } from './github-flow.js';
 import { handleClaudeFlow } from './claude-flow.js';
+import { getLandingPageContent } from './landing-page.js';
 
 let isCleaningUp = false;
 
@@ -30,7 +31,8 @@ async function cleanup(browser) {
   process.exit(0);
 }
 
-export async function task(roundNumber) {
+export async function task(namespaceWrapper) {
+  const content = getLandingPageContent(namespaceWrapper);
   let browser;
   
   // Handle process termination
@@ -42,7 +44,7 @@ export async function task(roundNumber) {
   });
 
   try {
-    console.log(`EXECUTE TASK FOR ROUND ${roundNumber}`);
+    console.log(`EXECUTE TASK FOR ROUND ${namespaceWrapper.roundNumber}`);
     
     browser = await puppeteer.launch({
       headless: false,

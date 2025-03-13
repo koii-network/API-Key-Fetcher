@@ -53,8 +53,8 @@ export async function handleClaudeFlow(browser) {
             left: calc(100% + 20px);
             top: 0;
             background: rgba(255, 255, 255, 0.9);
-            border-radius: 12px;
-            padding: 12px 20px;
+            border-radius: 4px;
+            padding: 5px 12px;
             box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
             font-family: system-ui, -apple-system, sans-serif;
             width: max-content;
@@ -73,12 +73,12 @@ export async function handleClaudeFlow(browser) {
             <div style="
               color: #41465D;
               font-weight: 600;
-              font-size: 16px;
-              margin-bottom: 4px;
+              font-size: 12px;
+              margin-bottom: 1px;
             ">Step 2</div>
             <div style="
               color: #41465D;
-              font-size: 14px;
+              font-size: 12px;
             ">Log In or Sign Up to your Claude account</div>
           </div>
         `;

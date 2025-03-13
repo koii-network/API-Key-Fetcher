@@ -198,6 +198,13 @@ export function getLandingPageContent(namespaceWrapper) {
           .card.completed .card-content p {
             color: var(--Green-1, #9BE7C4);
           }
+          .card.highlight {
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.4),
+                        0 0 40px rgba(255, 255, 255, 0.2),
+                        0 0 60px rgba(134, 255, 226, 0.2),
+                        0 0 80px rgba(134, 255, 226, 0.1);
+            transition: box-shadow 0.3s ease;
+          }
         </style>
       </head>
       <body>
@@ -245,7 +252,41 @@ export function getLandingPageContent(namespaceWrapper) {
       font-size: 12px;
     ">Link your Github below</div>
   </div>
-</span><br/><span style="color: rgba(255, 255, 255, 0.80); font-size: 16px; font-family: Sora; font-weight: 400; line-height: 24px; word-wrap: break-word">Step 2 – Add your </span><span style="color: rgba(255, 255, 255, 0.80); font-size: 16px; font-family: Sora; font-weight: 700; text-decoration: underline; line-height: 24px; word-wrap: break-word">Anthropic Key (AI Agent)<br/></span><span style="color: rgba(255, 255, 255, 0.80); font-size: 16px; font-family: Sora; font-weight: 400; line-height: 24px; word-wrap: break-word">💡 Link additional items to earn Super Contributor rewards and gain access to advanced features.</span></div>
+</span><br/><span style="color: rgba(255, 255, 255, 0.80); font-size: 16px; font-family: Sora; font-weight: 400; line-height: 24px; word-wrap: break-word">Step 2 – Add your </span><span style="color: rgba(255, 255, 255, 0.80); font-size: 16px; font-family: Sora; font-weight: 700; text-decoration: underline; line-height: 24px; word-wrap: break-word; position: relative;" class="tooltip-trigger">Anthropic Key (AI Agent)
+  <div class="tooltip" style="
+    display: none;
+    position: absolute;
+    left: calc(100% + 20px);
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 4px;
+    padding: 5px 12px;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.4),
+                0 0 40px rgba(255, 255, 255, 0.2),
+                0 0 60px rgba(134, 255, 226, 0.2),
+                0 0 80px rgba(134, 255, 226, 0.1);
+    font-family: system-ui, -apple-system, sans-serif;
+    width: max-content;
+    z-index: 1000;">
+    <div style="
+      position: absolute;
+      left: -8px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 0;
+      height: 0;
+      border-top: 8px solid transparent;
+      border-bottom: 8px solid transparent;
+      border-right: 8px solid rgba(255, 255, 255, 0.9);
+    "></div>
+    <div style="
+      color: #41465D;
+      font-weight: 500;
+      font-size: 12px;
+    ">Get your Anthropic Key below</div>
+  </div>
+</span><br/><span style="color: rgba(255, 255, 255, 0.80); font-size: 16px; font-family: Sora; font-weight: 400; line-height: 24px; word-wrap: break-word">💡 Link additional items to earn Super Contributor rewards and gain access to advanced features.</span></div>
         
         <div class="section">
           <h2 class="section-title">Free Accounts</h2>
@@ -412,17 +453,34 @@ export function getLandingPageContent(namespaceWrapper) {
             checkInitialStatus();
           });
 
-          // Add tooltip functionality
+          // Update tooltip functionality for multiple triggers and add card highlighting
           document.addEventListener('DOMContentLoaded', () => {
-            const tooltipTrigger = document.querySelector('.tooltip-trigger');
-            const tooltip = tooltipTrigger.querySelector('.tooltip');
+            const tooltipTriggers = document.querySelectorAll('.tooltip-trigger');
             
-            tooltipTrigger.addEventListener('mouseenter', () => {
-              tooltip.style.display = 'block';
-            });
-            
-            tooltipTrigger.addEventListener('mouseleave', () => {
-              tooltip.style.display = 'none';
+            tooltipTriggers.forEach(trigger => {
+              const tooltip = trigger.querySelector('.tooltip');
+              
+              // Determine which card to highlight based on the text content
+              let cardToHighlight;
+              if (trigger.textContent.includes('GitHub')) {
+                cardToHighlight = document.getElementById('github-card');
+              } else if (trigger.textContent.includes('Anthropic')) {
+                cardToHighlight = document.getElementById('anthropic-card');
+              }
+              
+              trigger.addEventListener('mouseenter', () => {
+                tooltip.style.display = 'block';
+                if (cardToHighlight) {
+                  cardToHighlight.classList.add('highlight');
+                }
+              });
+              
+              trigger.addEventListener('mouseleave', () => {
+                tooltip.style.display = 'none';
+                if (cardToHighlight) {
+                  cardToHighlight.classList.remove('highlight');
+                }
+              });
             });
           });
         </script>

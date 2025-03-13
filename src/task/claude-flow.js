@@ -131,6 +131,7 @@ export async function handleClaudeFlow(browser) {
           <div style="
             position: absolute;
             left: calc(100% + 20px);
+            top: -24px;
             background: rgba(255, 255, 255, 0.9);
             border-radius: 4px;
             padding: 5px 12px;
@@ -162,7 +163,8 @@ export async function handleClaudeFlow(browser) {
               color: #41465D;
               font-weight: 500;
               font-size: 12px;
-            ">Enter the verification code sent to your email</div>
+              line-height: 1.4;
+            ">1. Check your email<br>2. Click verification link<br>3. Copy code shown<br>4. Paste code here</div>
           </div>
         `;
         codeField.parentElement.style.position = "relative";

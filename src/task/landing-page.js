@@ -210,11 +210,8 @@ export function getLandingPageContent(namespaceWrapper) {
           </div>
         </div>
 
-        <h1 class="heading">Become a Super Contributor</h1>
-        <p class="sub-heading">
-          Earn more rewards when you connect additional services to your Koii account.
-          <span class="small-text">Prometheus requires at least one Github Account and one AI Agent to operate.</span>
-        </p>
+        <h1 class="heading">Get Set Up to Build with Prometheus</h1>
+ <div style="text-align: center"><span style="color: rgba(255, 255, 255, 0.80); font-size: 16px; font-family: Sora; font-weight: 400; line-height: 24px; word-wrap: break-word"> To activate Prometheus Builder, connect your tools and unlock full functionality.<br/>Step 1 – Link your </span><span style="color: rgba(255, 255, 255, 0.80); font-size: 16px; font-family: Sora; font-weight: 600; text-decoration: underline; line-height: 24px; word-wrap: break-word">GitHub account</span><br/><span style="color: rgba(255, 255, 255, 0.80); font-size: 16px; font-family: Sora; font-weight: 400; line-height: 24px; word-wrap: break-word">Step 2 – Add your </span><span style="color: rgba(255, 255, 255, 0.80); font-size: 16px; font-family: Sora; font-weight: 700; text-decoration: underline; line-height: 24px; word-wrap: break-word">Anthropic Key (AI Agent)<br/></span><span style="color: rgba(255, 255, 255, 0.80); font-size: 16px; font-family: Sora; font-weight: 400; line-height: 24px; word-wrap: break-word">💡 Link additional items to earn Super Contributor rewards and gain access to advanced features.</span></div>
         
         <div class="section">
           <h2 class="section-title">Free Accounts</h2>

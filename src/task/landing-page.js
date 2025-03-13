@@ -218,75 +218,7 @@ export function getLandingPageContent(namespaceWrapper) {
         </div>
 
         <h1 class="heading">Get Set Up to Build with Prometheus</h1>
- <div style="text-align: center"><span style="color: rgba(255, 255, 255, 0.80); font-size: 16px; font-family: Sora; font-weight: 400; line-height: 24px; word-wrap: break-word"> To activate Prometheus Builder, connect your tools and unlock full functionality.<br/>Step 1 – Link your </span><span style="color: rgba(255, 255, 255, 0.80); font-size: 16px; font-family: Sora; font-weight: 600; text-decoration: underline; line-height: 24px; word-wrap: break-word; position: relative;" class="tooltip-trigger">GitHub account
-  <div class="tooltip" style="
-    display: none;
-    position: absolute;
-    left: calc(100% + 20px);
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(255, 255, 255, 0.9);
-    border-radius: 4px;
-    padding: 5px 12px;
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0.4),
-                0 0 40px rgba(255, 255, 255, 0.2),
-                0 0 60px rgba(134, 255, 226, 0.2),
-                0 0 80px rgba(134, 255, 226, 0.1);
-    font-family: system-ui, -apple-system, sans-serif;
-    width: max-content;
-    z-index: 1000;">
-    <div style="
-      position: absolute;
-      left: -8px;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 0;
-      height: 0;
-      border-top: 8px solid transparent;
-      border-bottom: 8px solid transparent;
-      border-right: 8px solid rgba(255, 255, 255, 0.9);
-    "></div>
-    <div style="
-      color: #41465D;
-      font-weight: 500;
-      font-size: 12px;
-    ">Link your Github below</div>
-  </div>
-</span><br/><span style="color: rgba(255, 255, 255, 0.80); font-size: 16px; font-family: Sora; font-weight: 400; line-height: 24px; word-wrap: break-word">Step 2 – Add your </span><span style="color: rgba(255, 255, 255, 0.80); font-size: 16px; font-family: Sora; font-weight: 700; text-decoration: underline; line-height: 24px; word-wrap: break-word; position: relative;" class="tooltip-trigger">Anthropic Key (AI Agent)
-  <div class="tooltip" style="
-    display: none;
-    position: absolute;
-    left: calc(100% + 20px);
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(255, 255, 255, 0.9);
-    border-radius: 4px;
-    padding: 5px 12px;
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0.4),
-                0 0 40px rgba(255, 255, 255, 0.2),
-                0 0 60px rgba(134, 255, 226, 0.2),
-                0 0 80px rgba(134, 255, 226, 0.1);
-    font-family: system-ui, -apple-system, sans-serif;
-    width: max-content;
-    z-index: 1000;">
-    <div style="
-      position: absolute;
-      left: -8px;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 0;
-      height: 0;
-      border-top: 8px solid transparent;
-      border-bottom: 8px solid transparent;
-      border-right: 8px solid rgba(255, 255, 255, 0.9);
-    "></div>
-    <div style="
-      color: #41465D;
-      font-weight: 500;
-      font-size: 12px;
-    ">Get your Anthropic Key below</div>
-  </div>
-</span><br/><span style="color: rgba(255, 255, 255, 0.80); font-size: 16px; font-family: Sora; font-weight: 400; line-height: 24px; word-wrap: break-word">💡 Link additional items to earn Super Contributor rewards and gain access to advanced features.</span></div>
+ <div style="text-align: center"><span style="color: rgba(255, 255, 255, 0.80); font-size: 16px; font-family: Sora; font-weight: 400; line-height: 24px; word-wrap: break-word"> To activate Prometheus Builder, connect your tools and unlock full functionality.<br/>Step 1 – Link your </span><span style="color: rgba(255, 255, 255, 0.80); font-size: 16px; font-family: Sora; font-weight: 600; text-decoration: underline; line-height: 24px; word-wrap: break-word; position: relative; cursor: pointer;" class="tooltip-trigger" data-type="github">GitHub account</span><br/><span style="color: rgba(255, 255, 255, 0.80); font-size: 16px; font-family: Sora; font-weight: 400; line-height: 24px; word-wrap: break-word">Step 2 – Add your </span><span style="color: rgba(255, 255, 255, 0.80); font-size: 16px; font-family: Sora; font-weight: 700; text-decoration: underline; line-height: 24px; word-wrap: break-word; position: relative; cursor: pointer;" class="tooltip-trigger" data-type="claude">Anthropic Key (AI Agent)</span><br/><span style="color: rgba(255, 255, 255, 0.80); font-size: 16px; font-family: Sora; font-weight: 400; line-height: 24px; word-wrap: break-word">💡 Link additional items to earn Super Contributor rewards and gain access to advanced features.</span></div>
         
         <div class="section">
           <h2 class="section-title">Free Accounts</h2>
@@ -322,7 +254,7 @@ export function getLandingPageContent(namespaceWrapper) {
                 <pattern id="pattern0_13048_3731" patternContentUnits="objectBoundingBox" width="1" height="1">
                 <use xlink:href="#image0_13048_3731" transform="scale(0.00333333 0.00485507)"/>
                 </pattern>
-                <image id="image0_13048_3731" width="300" height="206" preserveAspectRatio="none" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAADOCAYAAACEhj9IAAAAAXNSR0IArs4c6QAAExlJREFUeF7tnb+OHMcRxnv2CAJ3iRMDAhwpMnBLLqONTECwAvIBCBCgnNtOnCgxAz2B6Dewc1mAAT2AGYgwQEWM+OcI8AEMEHDC5C66HWPIu+Pe7uxOdXdVd3/dn1J1V898VfV1z+9mh53jf9EKvH379rer1eon59yvo4NlCND3/be3b9/+Z4alvZcE1fp/s9nswfHx8TvvG+aEawp01CNegZOTk7/2ff99fKQ8Ebque3p6evpwuVx+yHMF8lVfvHjxq6Ojo3/1fX9PPiv/yL7v/4CyKeRXa/cV0LAiszM00OHh4XPn3K3IUDmnv1+tVo8Wi8WznBchXfv169ffdF33g3R8CeOQNoUS9Np1DTSsyOwgNs/YLZ+fn//jzp07f4qUI8n0tcdCpE0CalNIksiARWhYAaKtT3n58uXfDw4O/hgZpoTpb87Ozu4iPBYOYiHqjrQplFCQY9dAw4rIzMVO/x/n3BcRYYqZisRZXr169fvZbPYjmPZvCN/jyp2GFaEfOmzfvHUkzkL4HlG4wFNpWIHJqwS2b949FGdB5IdIm0Jga5hOo2EFyovYLJJb7bru8Xw+fyIZm3sM4XvuDKRfn4YVqDki9BXeKuG7UKjQYYTvoco5R8MK0K422L4pAeF7QFH4TSF899PrajQNK0C42mA74XtAEUROQdoUIm9VdToNy1POSmE74btnHcQOJ3wPU5CG5albrbB95JRF+O5ZG57Dof4i63lvZsNpWJ7SVgzbN5UgfPesDd/hhO++ihG6eylWO2wnfPcqB43BhO+eKvKE5SFY7bB9DL7P5/P7HhJlG8o337NJn3RhGpZQ7kZgO+G7sB60hhG++ylJwxLq1QpsJ3wXFoTeMMJ3Dy1pWEKxGoLthO/CmtAaRvguV5KGJdCqNdhO+C4oCt0hhO9CPWlYAqFag+1j8J3ffBcUSsQQvvkuE4+GNaFTo7Cd8F3WP2qjCN9lUtKwJnRqFbYTvssaSHEU4btATBrWhEgNw3bCd0EDaQ4hfJ9Wk4a1R6PWYTvh+3QDKY8gfJ8QlIa1R6DWYfsYfOeb78oWtRGO8H2/vjSsHfqg/tTDtp3c+9ls9hXKP7mOyB8J32lYQT2MWOxBN+o5id989xTMfzjh+x7NeMLaIQ5h+86q4Wdn/E3Iawbh+265aFgj2hC27+8vJM7Cf3DVyyuLH0zDGkkRYfsER+i6p4Tvtr2NtCnYKnE9Og1rQ22+2S4qPyjOgsgjCd/H65CGtaELYnGLLEZ5EOG7sqDb4aA2BXM1LhagYW0oTdguLj3Cd7FUYQMJ37d1o2GtaULY7tdYSJyF8N0vt6WOpmGtZYaw3a9MB85C+O6nme9opE3B995CxtOwLlTjm+0h5cM334NU85hE+M6/Eo6WC2G7RxetDSV8D9PNYxbh+3q9eQhX9VDC9uD0Er4HSyebSPj+WSc+EjrnCNtljbNrFBJnIXyPy3Xu2TQs5xxhe1wZEr7H6SeZjbQpSO4ndEzzhkXYHlo61+bxszMqMu4OQvj+SZvmDYuwXafTCN91dNwThfCdhuUcYbtaoxG+q0k5HojwvfETFmG7bochcRbCd93cp4rW9CMhYbtumRG+6+o5Fg1pU7BQo1nDImy3KCe++W6i6lrQ1uF7s4Z18Ujws3WBtRaf8N08403D92YNi7DdrLEI382k/RS4ZfjepGERttt2FBJnIXy3rQXt6E0aFmG7dhldj0f4bqvvEB1pU9BUoznDAoXtb5xztzQTbxyLb74bC9wqfG/OsABh+/u+77/tuu47JNMifDd2LOeahO/NGRYabL/cSY+Ojv7c9/335m2gtwDhu56Wo5FahO9NGRYibL9kFYhwGImzIOrrnHszm80eHB8fvzP2xmLCN2VYgLD9qiAR2Rvhu32fI20KGmo0Y1iIDb955Af8sgThu0aX7onRGnxvxrAQYftqtXq0WCyeXdbrxSPtT4TvNi6AqK9rDL43Y1iosH25XH5Yb0+0+xg4y9nZ2d3N+7CxnPiogPo29eZ7E4aFCNt3vRaACIeROAuivi3B9yYMCxC272Q/NbC4+HOQXQREfVt68716w0IswKn3a2oyYDvrCY8M+McN1wp8r96wAGH75O/EEOEw33wPN1DhzCbefK/esAAhqghS13pfwuY0Hwao73DKejyfz5+Yi5NxgaoNqybYvlkjNZ4cM/bB1tKo8B3pL7Ih+a7asGpmPTWyuZACtpqDqG8L8L1aw0IsON+fstRsyFZG5BOX8N1HrTRjqzWsFh6Zan7kTVP++1dB/ONG7W++V2tYgNBUBNs3W6yV+8xlYID6Vv3me5WGhXjymHr3alfDIj628M13c/sN2vzMr0phgSoNC5HtbP7QWZrbgdUdHh4+R/pBdKg5SzXRHIfIQmuG79UZFmKBxb6ljGjQs9nsK5QPzyGeYmNrStP0NWNVZ1gtwPYd72T96Jz7QrM4LGMhveRI+G5ZCX6xqzMsQEga/ZlbxFMlPzvj16gho5E2Ben9VWVYLcH2zQQjPrYQvkvbNHhcdfC9KsNCZDmhsH2zhBEfWwjfg41IPBFpU5DcVDWGhfhYpA1GAR+H+c13SZdGjNGusYhLUZlajWEhwnZtxoD4g11tDVS6YkcQxFNsbW++V2NYPF04h3jKJHy3tNhPsZE2hSk1qjCslmH7ZoIBOd7kBwunijjl/0c8xaJtCvvyWYVhsUk/pxjxsYXw3d5ya4Hv8IbFx6DtYufjsa0BIG6QtcB3eMMibN9uTmpia1iIp9ha4Du8YfE0sd2cPHXaGtYQHbDuqoDv0IaFCNt9vyoa2nqIjy1InIXwPbQy4+ZBGxabcnfyEc2c8D2umSWzkTaFsfuBNSw+9kyXJ+BjC9Sb74gbZqoT/nR1ho2ANSzEI3nqEwTiD6KRXnIkfA8znZhZsIaFeHrQ+qGzNOGIXyNFe8kRsA6h4TukYSHymVzvwSA+tiBxFsSTPtqmsL5BQxoWm1B6xnIOsaFSPzrL1azmFRKon0NBGxYqbJ/NZg9yfMMcVC/C9xgXFczNdeIXXNreIXAnLMS3uHOfGAjfY9tk/3zCd1t9oU9YgJDzfWrYvlk+oA0F9XlfwLqEhO9QJyzC9vCdDLGhCN/D8y2cCbUpDPcEZViIsL2U94oI34UtHDgMlBXCwXcYwwItiGLgMfULdCKPaaAb6tP5fH7f4zazDoUxLJ4Q4usEtKEez+fzJ/F3bx8BlBVmZ6w+mYExLDIYn7SOjwVtKCjOglinpWALSYVDGBYibC/1bWLEhiJ8l7Ry1BiYTQHCsPgoE1WM1ybzPTY9LccigbJCGPhevGGBFkAxsH2zqainrWEN0UE3WAj4XrxhIcL20r85BNpQhO+2XgsB34s3LDIX/SolE9TXdDMiYt0iwPeiDYuNZddYiA1F+G5XDxeRi4fvRRsW4qNL7h86S0sa8QfRKNoOOQBlhcXD92INCzThEBzgsqEODw+fO+duSU2ugHHF/jFjTBvEDbd0/lqsYaHC9tPT04fL5fJDAc09eQmgDUX4PpnZqAFFbwrFGhYZS1TRiSZzUxDJFDUIsY5Lhu9FGhbqT0hyfVU0tKNAH7uL5yzr+UDcFEr9lcaga5GGhfioggSE1xuK8D3U7mXzuCnIdJKOKs6wQBMMA9s3CwP0NFs0Z9nUGHEDLhW+F2dYiEdo1A/6XzYWOYt0fw8bx00hTLexWcUZFptHL7nSSIibRMmcZUx31rW0GvePK8qwuBPpJNU3CuhjOOG7b6L9xxf35ntRhoX4rI8K22vgLEjac1Pwd8uiHwmZUJ2Ehkbh6TZUOfk8xA25NPhezAmLHEVe+FYjyVmslP0Ul5tCvL7FGBabJT6ZsREQv0aK9hda1nlclRZhWNx54pKoNZuP5VpK7o7DJ4k4jYswLD7bxyVRczZiLgjfNStgPFYp3yLLbljc1e2LzWcF0I8m8s13nyQHjC0Fvmc3LB6RA6rHeAo5i63ARCDh+mY3LMTmGN6yPj8//yVc9rJn3rhx48u+7++VfZXXr47w3T5bJXx2Jqthge409pXBFYIUKIWzSC6eTxYSlbbHZDUsRMAbJjNnpVCA8N1e5dybQjbDQoXt9iXBFSIUIHyPEE8yNfemkM2wQI/EkpxyTEYFSuAs0tsHRSJZN4VshgUK26W1yHGZFCB8txc+56aQxbBAdxb7SuAKKgqsVquvF4vFM5VgxkFAnzSyfXYmi2ERtht3QePhc3MWH/lRWW4u+J7csFAT5FOEHJtdgaycxffuETfwXJtCcsMCPQL71iDHZ1YgJ2fxvXX+HEquWHLDImyXJ4cjwxUgfA/XTjozx6aQ1LAI26WlwHEaChC+a6i4N0Zy+J7UsBCf1c1TzgXMFMjFWUJuCJXtpobvyQwLNSEhxcc5xShA+G6citSbQjLDImw3rhyGH1UgB2cJTQXh+7RyyQyLsH06GRyhrwDhu76mmxFTbgpJDIuw3b5ouMJuBQjfzasjGXxPYliE7eYFwwX2KJCas8QkA5X1poLv5oaFmoCYouPc4hQgfDdOSapNwdywCNuNK4XhRQqk5CyiC9oziPB9tzjmhkXYHlu+nK+hAOG7hor7Y6TYFEwNi7Ddvki4glwBwne5VoEjzeG7qWERtgemndNMFEjFWTQuHpX9WsN3M8NCFVyj2BijWAUI341TY70pmBkWYbtxZTB8kAIpOEvQhY1MInzfFsXMsAjbtcqWcTQVIHzXVHM8luWmYGJYhO32RcEVwhUgfA/XTjjTDL6bGNbr16+/6bruB+HNcRgVSKqANWfRvBlUFmwF39UNC1VgzSJjrOIVIHw3TpHVpqBuWITtxpXA8CoKWHIWlQtcC0L4/lkMdcMibNcuV8azUIDw3ULV6zEtNgVVwyJsty8CrqCnACB8/1nv7pNEUofvqobFN9uTFAEXUVLAirMoXd61MKhsWBu+qxkWqqAWxcWYMAoQvhunSntTUDMswnbjzDO8iQIWnMXkQp1zhO/OqRkWYbtVmTKupQKE75bqfoqtuSmoGBZhu33SuYKdAoTvdtpeRFaD7yqGxTfbzRPOBQwV0OYshpfqUFmxFnyPNixUAZ1zb87Pz3+xLK4WY9+4cePLvu/vgd074btxwrQ2hWjDQoXtWo5vnGe48Kj1oMlZrJPWMnyPNixQ2P5mNps9OD4+fmddXK3FRz1xE77bV6rGphBlWKiwXet4ap9izBVQmSbhu3m9RcP3KMMCLcz3q9Xq0WKxeGaenkYX4EZmn3jUk2wsigk2LFTB0I7+9qVvswIoKiB8tymHq6ixTzfBhkW4apxZ8PCsD/sEtgjfgw2LO6h9QSKvwBN4muwh9mEMfA8yLDKKNMWIvgro1zugGOfFSbaZz84EGRYobHexwA/dQFJfPzc2e8VRT7KhvehtWKgCDW+2n52d3V0ulx/sy4grXCqA+MjinCN8Ny7hUPjubViEqcaZrCw86COL6hcGrFPaEnz3NizumNblV1d81BM52usviH0ZAt+9DAuVSQzFN5/P79dlBTh3Q/hunyvQk6w3pvEyLMJ2+8KrcQXQRxYXylly5BD1JOsL38WGhSoIYXuO9tleE/GRhfDdvnZ8NwWxYaHCdl9B7FPU5gqop/MQzpIrw6AnWa+/yIoNC3WH5A+dc7XP9XWHE/rh4eFz59ytMq5IdhWE7zKdYkb5bAoiw0KG7aenpw/57lVMOenNJXzX03JXpNrhu8iwUI/zvkDPvpzaXoFYwT7/qKxZ2quThoUqwADb+VVR+wbxWYG15KNW+FjEk6yUNU8aFnfF8MLhzG0FUE/rPpwld95rhu+ThkXYnrv86lqfPDRNPhH7VrIp7DUsFlea4mptFcRmGt7JQvqLM+hJdvLN972GBXrTUD9cbc2shvslZrDPOiovnILvOw0L9YbR3k62L93yVmBtpclJjfB9p2FxF0xTVK2ugthMQ64knKWUnNYI33caFihn4FdFS+mWiesgH02TKMQ+3rcpjBoWajHxh85pmkBrFcRmQoPvtb35PmpYhO1aLck4+xQAbSZ+diZBWe+C71uGRSCaIBtc4qMCwLUG9SsKRF646833LcNChe38qiimCyI2E+F7klob/ezMlmGBcgXC9iQ1pL8I6F+yhr8WPkX6EghiX4/B92uGRdiu35CMOK0AYjOhwXdELj22KVwzLMSbGtpB+kvv6dbhiBwKsO7sVUflhZvw/cqwUG8IbaezL028FVC/Ror2CSNEXrh5GLkyLGTYjsQS8OwkzRUjNhPhe5LauAbfrwwLlCMQtiepGftFuGHaazysgNjn6/D9o2Ehw3Z+VTRNoVuvQiRhrfCn+KC88OqzMx8NC/QmCNvT1HiyVViH9lKjbgyr1errxWLxrEO9AcJ2++JOvQJP+mkUR+SFl/C9IztIUyRcRaYAImMhfJflNnLUR/jesUAiZeR0VQW4garKuTMYYt8Pp6zu5OTk333f/yaNTDqrdF33367r/nJ8fPxOJyKjlKLAgChu3rz5t4ODg9+Vck2S60CryQte+J3k3koZM2j8f9oPZtTEpy0LAAAAAElFTkSuQmCC"/>
+                <image id="image0_13048_3731" width="300" height="206" preserveAspectRatio="none" xlink:href="data:image/png;base64,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"/>
                 </defs>
                 </svg>
 
@@ -453,33 +385,42 @@ export function getLandingPageContent(namespaceWrapper) {
             checkInitialStatus();
           });
 
-          // Update tooltip functionality for multiple triggers and add card highlighting
+          // Update functionality for triggers and card highlighting
           document.addEventListener('DOMContentLoaded', () => {
             const tooltipTriggers = document.querySelectorAll('.tooltip-trigger');
             
             tooltipTriggers.forEach(trigger => {
-              const tooltip = trigger.querySelector('.tooltip');
-              
-              // Determine which card to highlight based on the text content
+              // Determine which card to highlight based on data-type
               let cardToHighlight;
-              if (trigger.textContent.includes('GitHub')) {
+              if (trigger.dataset.type === 'github') {
                 cardToHighlight = document.getElementById('github-card');
-              } else if (trigger.textContent.includes('Anthropic')) {
+              } else if (trigger.dataset.type === 'claude') {
                 cardToHighlight = document.getElementById('anthropic-card');
               }
               
               trigger.addEventListener('mouseenter', () => {
-                tooltip.style.display = 'block';
                 if (cardToHighlight) {
                   cardToHighlight.classList.add('highlight');
                 }
               });
               
               trigger.addEventListener('mouseleave', () => {
-                tooltip.style.display = 'none';
                 if (cardToHighlight) {
                   cardToHighlight.classList.remove('highlight');
                 }
+              });
+
+              // Add click handler
+              trigger.addEventListener('click', () => {
+                if (flowState.inProgress) {
+                  alert('⚠️ Please finish the ongoing flow first before starting another one.');
+                  return;
+                }
+
+                flowState = {
+                  inProgress: true,
+                  selectedCard: trigger.dataset.type
+                };
               });
             });
           });

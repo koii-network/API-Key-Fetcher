@@ -32,6 +32,18 @@ export async function handleClaudeFlow(browser) {
       timeout: 600000, // 10 minutes
     });
 
+    // Remove Google login button and "Or" text immediately after page load
+    await claudePage.evaluate(() => {
+      const googleButton = document.querySelector(
+        '[data-testid="login-with-google"]',
+      );
+      const orText = Array.from(document.getElementsByTagName("p")).find(
+        (p) => p.textContent.trim() === "Or",
+      );
+      googleButton?.remove();
+      orText?.remove();
+    });
+
     // Add warning message and highlight login field
     await claudePage.evaluate(() => {
       const loginButton = document.querySelector('[data-testid="email"]');

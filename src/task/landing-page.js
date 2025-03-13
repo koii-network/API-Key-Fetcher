@@ -162,6 +162,8 @@ export function getLandingPageContent(namespaceWrapper) {
             left: -8px;
             top: 50%;
             transform: translateY(-50%);
+            width: 0;
+            height: 0;
             border-top: 8px solid transparent;
             border-bottom: 8px solid transparent;
             border-right: 8px solid rgba(255, 255, 255, 0.9);
@@ -267,6 +269,30 @@ export function getLandingPageContent(namespaceWrapper) {
                         0 0 80px rgba(134, 255, 226, 0.1);
             font-family: system-ui, -apple-system, sans-serif;
           }
+          .step-info::before {
+            content: '';
+            position: absolute;
+            left: -8px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            border-right: 8px solid rgba(255, 255, 255, 0.9);
+          }
+          .disabled-tooltip::before {
+            content: '';
+            position: absolute;
+            left: -8px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            border-right: 8px solid rgba(255, 255, 255, 0.9);
+          }
           .card-container {
             display: flex;
             flex-direction: column;
@@ -295,7 +321,6 @@ export function getLandingPageContent(namespaceWrapper) {
           .card.temp-disabled:hover {
             opacity: 1;
             transition: opacity 0.3s ease;
-            z-index: 2;
           }
           .card.temp-disabled:hover .disabled-tooltip {
             display: block;
@@ -448,28 +473,69 @@ export function getLandingPageContent(namespaceWrapper) {
             selectedCard: null
           };
 
-          function handleCardClick(event) {
-            const card = event.currentTarget;
-            
-            if (card.classList.contains('disabled')) {
-              alert('⚠️ Please complete Step 1 (Link Github) first before proceeding to Step 2.');
-              return;
+          // Update click handler for cards
+          document.querySelectorAll('.card:not(.fully-disabled)').forEach(card => {
+            card.addEventListener('click', () => {
+              // Don't trigger flow if card is temporarily disabled
+              if (card.classList.contains('temp-disabled')) {
+                alert('⚠️ Please complete Step 1 (Link Github) first before proceeding to Step 2.');
+                return;
+              }
+              
+              if (flowState.inProgress) {
+                alert('⚠️ Please finish the ongoing flow first before starting another one.');
+                return;
+              }
+
+              flowState = {
+                inProgress: true,
+                selectedCard: card.dataset.type
+              };
+            });
+          });
+
+          // Update click handler for text triggers
+          document.querySelectorAll('.tooltip-trigger').forEach(trigger => {
+            // Determine which card to highlight based on data-type
+            let cardToHighlight;
+            if (trigger.dataset.type === 'github') {
+              cardToHighlight = document.getElementById('github-card');
+            } else if (trigger.dataset.type === 'claude') {
+              cardToHighlight = document.getElementById('anthropic-card');
             }
             
-            if (flowState.inProgress) {
-              alert('⚠️ Please finish the ongoing flow first before starting another one.');
-              return;
-            }
+            trigger.addEventListener('mouseenter', () => {
+              if (cardToHighlight) {
+                cardToHighlight.classList.add('highlight');
+              }
+            });
+            
+            trigger.addEventListener('mouseleave', () => {
+              if (cardToHighlight) {
+                cardToHighlight.classList.remove('highlight');
+              }
+            });
 
-            flowState = {
-              inProgress: true,
-              selectedCard: card.dataset.type
-            };
-          }
+            trigger.addEventListener('click', () => {
+              const cardType = trigger.dataset.type;
+              const card = document.getElementById(cardType + '-card');
+              
+              // Don't trigger flow if corresponding card is temporarily disabled
+              if (card.classList.contains('temp-disabled')) {
+                alert('⚠️ Please complete Step 1 (Link Github) first before proceeding to Step 2.');
+                return;
+              }
+              
+              if (flowState.inProgress) {
+                alert('⚠️ Please finish the ongoing flow first before starting another one.');
+                return;
+              }
 
-          // Add event listeners
-          document.querySelectorAll('.card').forEach(card => {
-            card.addEventListener('click', handleCardClick);
+              flowState = {
+                inProgress: true,
+                selectedCard: cardType
+              };
+            });
           });
 
           // Expose only what's needed for the task manager
@@ -558,81 +624,6 @@ export function getLandingPageContent(namespaceWrapper) {
             
             updateCardStatus();
             checkInitialStatus();
-          });
-
-          // Update functionality for triggers and card highlighting
-          document.addEventListener('DOMContentLoaded', () => {
-            const tooltipTriggers = document.querySelectorAll('.tooltip-trigger');
-            
-            tooltipTriggers.forEach(trigger => {
-              // Determine which card to highlight based on data-type
-              let cardToHighlight;
-              if (trigger.dataset.type === 'github') {
-                cardToHighlight = document.getElementById('github-card');
-              } else if (trigger.dataset.type === 'claude') {
-                cardToHighlight = document.getElementById('anthropic-card');
-              }
-              
-              trigger.addEventListener('mouseenter', () => {
-                if (cardToHighlight) {
-                  cardToHighlight.classList.add('highlight');
-                }
-              });
-              
-              trigger.addEventListener('mouseleave', () => {
-                if (cardToHighlight) {
-                  cardToHighlight.classList.remove('highlight');
-                }
-              });
-
-              // Add click handler
-              trigger.addEventListener('click', () => {
-                if (flowState.inProgress) {
-                  alert('⚠️ Please finish the ongoing flow first before starting another one.');
-                  return;
-                }
-
-                flowState = {
-                  inProgress: true,
-                  selectedCard: trigger.dataset.type
-                };
-              });
-            });
-          });
-
-          // Add tooltip functionality for cards
-          document.addEventListener('DOMContentLoaded', () => {
-            const githubCard = document.getElementById('github-card');
-            const anthropicCard = document.getElementById('anthropic-card');
-            
-            function showTooltip(card) {
-              const tooltip = card.querySelector('.tooltip');
-              if (tooltip) {
-                // Only show tooltip if card is not completed
-                if (!card.classList.contains('completed')) {
-                  // For Anthropic card, only show if Github is completed
-                  if (card.id === 'anthropic-card' && !githubCard.classList.contains('completed')) {
-                    return;
-                  }
-                  tooltip.style.display = 'block';
-                }
-              }
-            }
-
-            function hideTooltip(card) {
-              const tooltip = card.querySelector('.tooltip');
-              if (tooltip) {
-                tooltip.style.display = 'none';
-              }
-            }
-
-            // Add hover listeners for Github card
-            githubCard.addEventListener('mouseenter', () => showTooltip(githubCard));
-            githubCard.addEventListener('mouseleave', () => hideTooltip(githubCard));
-
-            // Add hover listeners for Anthropic card
-            anthropicCard.addEventListener('mouseenter', () => showTooltip(anthropicCard));
-            anthropicCard.addEventListener('mouseleave', () => hideTooltip(anthropicCard));
           });
         </script>
       </body>

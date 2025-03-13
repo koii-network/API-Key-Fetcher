@@ -55,7 +55,10 @@ export async function handleClaudeFlow(browser) {
             background: rgba(255, 255, 255, 0.9);
             border-radius: 4px;
             padding: 5px 12px;
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.4),
+                        0 0 40px rgba(255, 255, 255, 0.2),
+                        0 0 60px rgba(134, 255, 226, 0.2),
+                        0 0 80px rgba(134, 255, 226, 0.1);
             font-family: system-ui, -apple-system, sans-serif;
             width: max-content;
           ">

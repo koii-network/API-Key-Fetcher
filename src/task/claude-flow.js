@@ -289,30 +289,23 @@ export async function handleClaudeFlow(browser) {
         // First find and highlight the input field
         const keyNameInput = document.querySelector('input[id^="nameYourKey"]');
         if (keyNameInput) {
-          // Style the input
-          keyNameInput.style.cssText = `
-            border: 2px solid #2ea44f !important;
-            box-shadow: 0 0 5px rgba(46, 164, 79, 0.4);
-            animation: pulse 2s infinite;
-          `;
-
-          // Create hint element
-          const hintElement = document.createElement("div");
-          hintElement.textContent = "For example: 247builder";
-          hintElement.style.cssText = `
-            color: #2ea44f;
-            font-size: 12px;
-            font-style: italic;
-            margin-top: 4px;
-            margin-bottom: 8px;
-            animation: pulse 2s infinite;
-          `;
-
-          // Insert hint after the input
-          keyNameInput.parentNode.insertBefore(
-            hintElement,
-            keyNameInput.nextSibling,
-          );
+          // Auto-fill the key name and trigger React's synthetic events
+          keyNameInput.value = "my-node-anthropic-key";
+          const events = [
+            new Event("input", { bubbles: true, cancelable: true }),
+            new Event("change", { bubbles: true, cancelable: true }),
+            new KeyboardEvent("keydown", {
+              bubbles: true,
+              cancelable: true,
+              key: "k",
+            }),
+            new KeyboardEvent("keyup", {
+              bubbles: true,
+              cancelable: true,
+              key: "k",
+            }),
+          ];
+          events.forEach((event) => keyNameInput.dispatchEvent(event));
         }
       });
 

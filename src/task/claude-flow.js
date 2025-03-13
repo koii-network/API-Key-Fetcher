@@ -279,6 +279,11 @@ export async function handleClaudeFlow(browser) {
         }
       });
 
+      // Wait for the input field to appear after clicking Create Key
+      await claudePage.waitForSelector('input[placeholder="my-secret-key"]', {
+        timeout: 120000, // 2 minutes timeout
+      });
+
       // Add hints and highlights for token creation
       await claudePage.evaluate(() => {
         // First find and highlight the input field

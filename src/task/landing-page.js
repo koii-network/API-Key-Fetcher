@@ -478,7 +478,7 @@ export function getLandingPageContent(namespaceWrapper) {
             card.addEventListener('click', () => {
               // Don't trigger flow if card is temporarily disabled
               if (card.classList.contains('temp-disabled')) {
-                alert('⚠️ Please complete Step 1 (Link Github) first before proceeding to Step 2.');
+                // alert('⚠️ Please complete Step 1 (Link Github) first before proceeding to Step 2.');
                 return;
               }
               

@@ -22,8 +22,8 @@ export async function handleGitHubFlow(browser) {
 
     // Set viewport size
     await githubPage.setViewport({
-      width: 1920,
-      height: 1080,
+      width: 1700,
+      height: 992,
     });
 
     // Navigate to GitHub login

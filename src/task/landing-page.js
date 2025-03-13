@@ -155,7 +155,7 @@ export function getLandingPageContent(namespaceWrapper) {
           
           .secure-footer {
             position: fixed;
-            bottom: 160px;
+            bottom: 120px;
             left: 40px;
             display: flex;
             align-items: center;

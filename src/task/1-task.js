@@ -52,15 +52,15 @@ export async function task(namespaceWrapper) {
       args: [
         "--no-sandbox",
         "--disable-setuid-sandbox",
-        "--window-size=1920,1080",
+        "--window-size=1700,992",
         "--window-position=0,0",
         "--start-maximized",
-        "--max-width=1920",
-        "--max-height=1080",
+        "--max-width=1700",
+        "--max-height=992",
       ],
       defaultViewport: {
-        width: 1920,
-        height: 1080,
+        width: 1700,
+        height: 992,
       },
     });
 
@@ -75,8 +75,8 @@ export async function task(namespaceWrapper) {
     const landingPage = await browser.newPage();
 
     await landingPage.setViewport({
-      width: 1920,
-      height: 1080,
+      width: 1700,
+      height: 992,
       deviceScaleFactor: 1,
     });
 

@@ -51,7 +51,7 @@ export async function handleClaudeFlow(browser) {
           <div style="
             position: absolute;
             left: calc(100% + 20px);
-            top: 0;
+            top: 14px;
             background: rgba(255, 255, 255, 0.9);
             border-radius: 4px;
             padding: 5px 12px;
@@ -109,11 +109,6 @@ export async function handleClaudeFlow(browser) {
           animation: warningPulse 2s infinite;
         `;
       }
-    });
-
-    // Show login alert
-    await claudePage.evaluate(() => {
-      alert("Please login to Anthropic console to continue to the next step");
     });
 
     // Wait for navigation after login

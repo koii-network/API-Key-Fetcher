@@ -75,12 +75,13 @@ export async function handleClaudeFlow(browser) {
             "></div>
             <div style="
               color: #41465D;
-              font-weight: 600;
+              font-weight: 700;
               font-size: 12px;
               margin-bottom: 1px;
             ">Step 2</div>
             <div style="
               color: #41465D;
+              font-weight: 500;
               font-size: 12px;
             ">Log In or Sign Up to your Claude account</div>
           </div>

@@ -138,19 +138,12 @@ export function getLandingPageContent(namespaceWrapper) {
           }
           
           .header .logo {
+            position: fixed;
+            top: 28px;
+            left: 28px;
             display: flex;
             align-items: center;
             gap: 8px;
-          }
-          
-          .header .logo-text {
-            color: rgba(255, 255, 255, 0.80);
-            font-family: 'Sora', sans-serif;
-            font-size: 20px;
-            font-style: normal;
-            font-weight: 500;
-            line-height: 150%;
-            letter-spacing: -0.22px;
           }
           
           .secure-footer {

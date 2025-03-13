@@ -164,6 +164,7 @@ export function getLandingPageContent(namespaceWrapper) {
             padding: 12px;
             gap: 10px;
             border: none;
+            backdrop-filter: blur(100px);
           }
           
           .secure-footer::after {

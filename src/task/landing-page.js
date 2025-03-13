@@ -211,7 +211,41 @@ export function getLandingPageContent(namespaceWrapper) {
         </div>
 
         <h1 class="heading">Get Set Up to Build with Prometheus</h1>
- <div style="text-align: center"><span style="color: rgba(255, 255, 255, 0.80); font-size: 16px; font-family: Sora; font-weight: 400; line-height: 24px; word-wrap: break-word"> To activate Prometheus Builder, connect your tools and unlock full functionality.<br/>Step 1 – Link your </span><span style="color: rgba(255, 255, 255, 0.80); font-size: 16px; font-family: Sora; font-weight: 600; text-decoration: underline; line-height: 24px; word-wrap: break-word">GitHub account</span><br/><span style="color: rgba(255, 255, 255, 0.80); font-size: 16px; font-family: Sora; font-weight: 400; line-height: 24px; word-wrap: break-word">Step 2 – Add your </span><span style="color: rgba(255, 255, 255, 0.80); font-size: 16px; font-family: Sora; font-weight: 700; text-decoration: underline; line-height: 24px; word-wrap: break-word">Anthropic Key (AI Agent)<br/></span><span style="color: rgba(255, 255, 255, 0.80); font-size: 16px; font-family: Sora; font-weight: 400; line-height: 24px; word-wrap: break-word">💡 Link additional items to earn Super Contributor rewards and gain access to advanced features.</span></div>
+ <div style="text-align: center"><span style="color: rgba(255, 255, 255, 0.80); font-size: 16px; font-family: Sora; font-weight: 400; line-height: 24px; word-wrap: break-word"> To activate Prometheus Builder, connect your tools and unlock full functionality.<br/>Step 1 – Link your </span><span style="color: rgba(255, 255, 255, 0.80); font-size: 16px; font-family: Sora; font-weight: 600; text-decoration: underline; line-height: 24px; word-wrap: break-word; position: relative;" class="tooltip-trigger">GitHub account
+  <div class="tooltip" style="
+    display: none;
+    position: absolute;
+    left: calc(100% + 20px);
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 4px;
+    padding: 5px 12px;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.4),
+                0 0 40px rgba(255, 255, 255, 0.2),
+                0 0 60px rgba(134, 255, 226, 0.2),
+                0 0 80px rgba(134, 255, 226, 0.1);
+    font-family: system-ui, -apple-system, sans-serif;
+    width: max-content;
+    z-index: 1000;">
+    <div style="
+      position: absolute;
+      left: -8px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 0;
+      height: 0;
+      border-top: 8px solid transparent;
+      border-bottom: 8px solid transparent;
+      border-right: 8px solid rgba(255, 255, 255, 0.9);
+    "></div>
+    <div style="
+      color: #41465D;
+      font-weight: 500;
+      font-size: 12px;
+    ">Link your Github below</div>
+  </div>
+</span><br/><span style="color: rgba(255, 255, 255, 0.80); font-size: 16px; font-family: Sora; font-weight: 400; line-height: 24px; word-wrap: break-word">Step 2 – Add your </span><span style="color: rgba(255, 255, 255, 0.80); font-size: 16px; font-family: Sora; font-weight: 700; text-decoration: underline; line-height: 24px; word-wrap: break-word">Anthropic Key (AI Agent)<br/></span><span style="color: rgba(255, 255, 255, 0.80); font-size: 16px; font-family: Sora; font-weight: 400; line-height: 24px; word-wrap: break-word">💡 Link additional items to earn Super Contributor rewards and gain access to advanced features.</span></div>
         
         <div class="section">
           <h2 class="section-title">Free Accounts</h2>
@@ -376,6 +410,20 @@ export function getLandingPageContent(namespaceWrapper) {
           document.addEventListener('DOMContentLoaded', () => {
             updateCardStatus();
             checkInitialStatus();
+          });
+
+          // Add tooltip functionality
+          document.addEventListener('DOMContentLoaded', () => {
+            const tooltipTrigger = document.querySelector('.tooltip-trigger');
+            const tooltip = tooltipTrigger.querySelector('.tooltip');
+            
+            tooltipTrigger.addEventListener('mouseenter', () => {
+              tooltip.style.display = 'block';
+            });
+            
+            tooltipTrigger.addEventListener('mouseleave', () => {
+              tooltip.style.display = 'none';
+            });
           });
         </script>
       </body>

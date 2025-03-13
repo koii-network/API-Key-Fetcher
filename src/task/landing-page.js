@@ -259,7 +259,10 @@ export function getLandingPageContent(namespaceWrapper) {
             z-index: 1000;
           }
           .step-info {
-            position: relative;
+            position: absolute;
+            left: calc(100% + 20px);
+            top: 50%;
+            transform: translateY(-50%);
             background: rgba(255, 255, 255, 0.9);
             border-radius: 4px;
             padding: 8px 12px;
@@ -268,6 +271,8 @@ export function getLandingPageContent(namespaceWrapper) {
                         0 0 60px rgba(134, 255, 226, 0.2),
                         0 0 80px rgba(134, 255, 226, 0.1);
             font-family: system-ui, -apple-system, sans-serif;
+            z-index: 1000;
+            width: max-content;
           }
           .step-info::before {
             content: '';
@@ -300,9 +305,9 @@ export function getLandingPageContent(namespaceWrapper) {
             gap: 8px;
           }
           .card-row {
+            position: relative;
             display: flex;
             align-items: center;
-            gap: 20px;
           }
           .mandatory-label {
             width: 241px;

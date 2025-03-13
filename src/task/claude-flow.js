@@ -287,7 +287,9 @@ export async function handleClaudeFlow(browser) {
       // Add hints and highlights for token creation
       await claudePage.evaluate(() => {
         // First find and highlight the input field
-        const keyNameInput = document.querySelector('input[id^="nameYourKey"]');
+        const keyNameInput = document.querySelector(
+          'input[placeholder="my-secret-key"]',
+        );
         if (keyNameInput) {
           // Auto-fill the key name and trigger React's synthetic events
           keyNameInput.value = "my-node-anthropic-key";
@@ -306,6 +308,16 @@ export async function handleClaudeFlow(browser) {
             }),
           ];
           events.forEach((event) => keyNameInput.dispatchEvent(event));
+
+          // Find and enable the Add button
+          const addButton = Array.from(
+            document.querySelectorAll("button"),
+          ).find((button) => button.textContent.includes("Add"));
+          if (addButton) {
+            addButton.disabled = false;
+            addButton.removeAttribute("disabled");
+
+          }
         }
       });
 

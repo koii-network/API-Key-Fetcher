@@ -219,6 +219,7 @@ export function getLandingPageContent(namespaceWrapper) {
           <h2 class="section-title">Free Accounts</h2>
           <p class="section-description">Connect popular tools to complete more tasks and participate in governance.</p>
           <div class="cards-container">
+          <div  style="display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 8px;">
             <div class="card" id="github-card" data-type="github">
               <div class="card-icon">
                 <svg xmlns="http://www.w3.org/2000/svg" width="71" height="71" viewBox="0 0 71 71" fill="none">
@@ -230,6 +231,8 @@ export function getLandingPageContent(namespaceWrapper) {
                 <p>Create an account<br>to contribute to projects</p>
               </div>
             </div>
+            <div style="width: 241px; height: 30px; text-align: center; color: #FFC78F; font-size: 12px; font-family: Sora; font-weight: 400; line-height: 18px; word-wrap: break-word">*Mandatory for Prometheus Task</div>
+          </div>
           </div>
         </div>
 

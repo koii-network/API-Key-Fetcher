@@ -114,13 +114,16 @@ export function getLandingPageContent(namespaceWrapper) {
             line-height: 1.4;
           }
           .card.completed::after {
-            content: "✓";
+            content: "";
             position: absolute;
-            top: 16px;
-            right: 16px;
-            color: var(--Green-1, #9BE7C4);
-            font-size: 20px;
-            font-weight: bold;
+            top: -14px;  /* Half of SVG height to center it */
+            right: -28px; /* Half of SVG width to center it */
+            width: 56px;
+            height: 56px;
+            background-image: url("data:image/svg+xml,%3Csvg width='56' height='56' viewBox='0 0 56 56' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cg filter='url(%23filter0_d_13107_11684)'%3E%3Cpath d='M52 26C52 39.2548 41.2548 50 28 50C14.7452 50 4 39.2548 4 26C4 12.7452 14.7452 2 28 2C41.2548 2 52 12.7452 52 26Z' fill='%239BE7C4'/%3E%3C/g%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M28.1239 10.4322C19.5369 10.3363 12.5283 17.2446 12.4322 25.8386C12.3363 34.4292 19.2474 41.4823 27.8347 41.5302L27.8386 41.5303C36.4292 41.6262 43.4822 34.7151 43.5302 26.1278L43.5303 26.1239C43.6262 17.5333 36.7151 10.4802 28.1278 10.4323L28.1239 10.4322ZM28.1376 9.03231C18.7714 8.92872 11.1369 16.4635 11.0323 25.823C10.9277 35.1859 18.4591 42.8768 27.8249 42.9302C37.187 43.0337 44.8768 35.5028 44.9302 26.1376C45.0337 16.7755 37.5028 9.08569 28.1376 9.03231Z' fill='%239BE7C4'/%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M34.6651 21.6354C34.9404 21.9068 34.9435 22.35 34.6721 22.6253L26.8348 30.5735C26.1674 31.2503 25.1312 31.2539 24.4599 30.5844L21.1949 27.5241C20.9129 27.2598 20.8985 26.8168 21.1629 26.5347C21.4273 26.2526 21.8703 26.2383 22.1523 26.5027L25.4261 29.5713C25.4329 29.5776 25.4394 29.584 25.4459 29.5905C25.5686 29.7149 25.7152 29.7149 25.8379 29.5905L33.6752 21.6424C33.9466 21.3671 34.3898 21.364 34.6651 21.6354Z' fill='%23171753'/%3E%3Cdefs%3E%3Cfilter id='filter0_d_13107_11684' x='0' y='0' width='56' height='56' filterUnits='userSpaceOnUse' color-interpolation-filters='sRGB'%3E%3CfeFlood flood-opacity='0' result='BackgroundImageFix'/%3E%3CfeColorMatrix in='SourceAlpha' type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0' result='hardAlpha'/%3E%3CfeOffset dy='2'/%3E%3CfeGaussianBlur stdDeviation='2'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.16 0'/%3E%3CfeBlend mode='normal' in2='BackgroundImageFix' result='effect1_dropShadow_13107_11684'/%3E%3CfeBlend mode='normal' in='SourceGraphic' in2='effect1_dropShadow_13107_11684' result='shape'/%3E%3C/filter%3E%3C/defs%3E%3C/svg%3E");
+            background-size: contain;
+            background-repeat: no-repeat;
+            z-index: 2;
           }
           .completed {
             border: 2px solid #2ea44f;

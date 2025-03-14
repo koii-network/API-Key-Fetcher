@@ -35,11 +35,13 @@ export async function handleGitHubFlow(browser) {
     // Add warning message and highlight login field
     await githubPage.evaluate(() => {
       const loginField = document.querySelector("#login_field");
+      const createAccountLink = document.querySelector('a[href="/signup"]');
+      
       if (loginField) {
         // Create warning message
         const warningDiv = document.createElement("div");
         warningDiv.textContent =
-          "⚠️ Please use your spare GitHub account. If you don't have one, please register a new account.";
+          "⚠️ Please use your spare GitHub account. If you don't have one, click the highlighted 'Create an account' button below.";
         warningDiv.style.cssText = `
           color: #b59f00;
           background: #fffbe6;
@@ -72,23 +74,72 @@ export async function handleGitHubFlow(browser) {
           border: 2px solid #e3b341 !important;
           box-shadow: 0 0 5px rgba(227, 179, 65, 0.3);
         `;
+
+        // Highlight the Create Account link if it exists
+        if (createAccountLink) {
+          createAccountLink.style.cssText = `
+            background: #2ea44f !important;
+            color: white !important;
+            border-radius: 6px;
+            padding: 8px 16px !important;
+            animation: pulseBorder 2s infinite;
+            font-weight: 600 !important;
+            box-shadow: 0 0 10px rgba(46, 164, 79, 0.4);
+          `;
+
+          // Add target="_blank" to open in new tab
+          createAccountLink.setAttribute('target', '_blank');
+          
+          // Add note about returning
+          const returnNote = document.createElement('div');
+          returnNote.textContent = "After creating your account, please return to this tab to continue.";
+          returnNote.style.cssText = `
+            color: #1a7f37;
+            font-size: 12px;
+            margin-top: 8px;
+            text-align: center;
+            font-style: italic;
+          `;
+          createAccountLink.parentNode.appendChild(returnNote);
+
+          // Add pulse animation
+          const style = document.createElement('style');
+          style.textContent = `
+            @keyframes pulseBorder {
+              0% { box-shadow: 0 0 5px rgba(46, 164, 79, 0.4); }
+              50% { box-shadow: 0 0 15px rgba(46, 164, 79, 0.6); }
+              100% { box-shadow: 0 0 5px rgba(46, 164, 79, 0.4); }
+            }
+          `;
+          document.head.appendChild(style);
+        }
       }
     });
 
-    // Show login alert
+    // Show login alert with create account option
     await githubPage.evaluate(() => {
-      alert("Please login to GitHub to continue to the next step");
+      alert("Please login to GitHub or create a new account (opens in new tab) to continue");
     });
 
-    // Wait for navigation after login
-    await githubPage.waitForNavigation({
-      waitUntil: "networkidle0",
-      timeout: 600000, // 10 minutes
-    });
+    // Wait for either login success or signup page
+    while (true) {
+      await githubPage.waitForNavigation({
+        waitUntil: "networkidle0",
+        timeout: 600000 // 10 minutes
+      }).catch(() => {}); // Ignore timeout errors
 
-    // Check if login was successful
+      const currentUrl = githubPage.url();
+      if (currentUrl === "https://github.com/") {
+        break; // User is logged in, continue with the flow
+      }
+      
+      // Small delay between checks
+      await new Promise(resolve => setTimeout(resolve, 1000));
+    }
+
+    // Now check if login was successful
     const currentUrl = githubPage.url();
-    if (currentUrl === "https://github.com/") {
+    if (currentUrl === "https://github.com/" || currentUrl === "https://github.com/dashboard") {
       // Get and store GitHub username
       const username = await githubPage.evaluate(() => {
         const metaElement = document.querySelector('meta[name="user-login"]');

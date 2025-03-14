@@ -396,38 +396,22 @@ export async function handleClaudeFlow(browser) {
       });
 
       // Add hints and highlights for token creation
-      await claudePage.evaluate(() => {
-        // First find and highlight the input field
-        const keyNameInput = document.querySelector(
+      try {
+        // First find and interact with the input field
+        await claudePage.waitForSelector('input[placeholder="my-secret-key"]');
+        await claudePage.click('input[placeholder="my-secret-key"]');
+        await claudePage.type(
           'input[placeholder="my-secret-key"]',
+          "my-node-anthropic-key",
         );
-        if (keyNameInput) {
-          // Auto-fill the key name and trigger React's synthetic events
-          keyNameInput.value = "my-node-anthropic-key";
-          const events = [
-            new Event("input", { bubbles: true, cancelable: true }),
-            new Event("change", { bubbles: true, cancelable: true }),
-            new KeyboardEvent("keydown", {
-              bubbles: true,
-              cancelable: true,
-              key: "k",
-            }),
-            new KeyboardEvent("keyup", {
-              bubbles: true,
-              cancelable: true,
-              key: "k",
-            }),
-          ];
-          events.forEach((event) => keyNameInput.dispatchEvent(event));
 
-          // Find and enable the Add button
+        // Add the visual hints through evaluate
+        await claudePage.evaluate(() => {
           const addButton = Array.from(
             document.querySelectorAll("button"),
           ).find((button) => button.textContent.includes("Add"));
-          if (addButton) {
-            addButton.disabled = false;
-            addButton.removeAttribute("disabled");
 
+          if (addButton) {
             // Add step indicator for Add button
             const hintElement = document.createElement("div");
             hintElement.innerHTML = `
@@ -474,8 +458,10 @@ export async function handleClaudeFlow(browser) {
             addButton.style.position = "relative";
             addButton.appendChild(hintElement);
           }
-        }
-      });
+        });
+      } catch (error) {
+        console.error("Error during key creation interaction:", error);
+      }
 
       // Wait for the key to be generated and displayed
       await claudePage.waitForFunction(

@@ -1,14 +1,14 @@
 import { namespaceWrapper } from "@_koii/task-manager/namespace-wrapper";
-import axios from 'axios';
+import axios from "axios";
 
 export async function handleGitHubFlow(browser) {
   let githubPage;
   try {
     // Create new page for GitHub flow
     githubPage = await browser.newPage();
-    
+
     // Add close listener to reset flag
-    githubPage.on('close', async () => {
+    githubPage.on("close", async () => {
       try {
         const pages = await browser.pages();
         const landingPage = pages[0];
@@ -22,23 +22,26 @@ export async function handleGitHubFlow(browser) {
 
     // Set viewport size
     await githubPage.setViewport({
-      width: 1920,
-      height: 1080
+      width: 1700,
+      height: 992,
     });
 
     // Navigate to GitHub login
-    await githubPage.goto('https://github.com/login', {
-      waitUntil: 'networkidle0',
-      timeout: 600000  // 10 minutes
+    await githubPage.goto("https://github.com/login", {
+      waitUntil: "networkidle0",
+      timeout: 600000, // 10 minutes
     });
 
     // Add warning message and highlight login field
     await githubPage.evaluate(() => {
-      const loginField = document.querySelector('#login_field');
+      const loginField = document.querySelector("#login_field");
+      const createAccountLink = document.querySelector('a[href="/signup"]');
+      
       if (loginField) {
         // Create warning message
-        const warningDiv = document.createElement('div');
-        warningDiv.textContent = '⚠️ Please use your spare GitHub account. If you don\'t have one, please register a new account.';
+        const warningDiv = document.createElement("div");
+        warningDiv.textContent =
+          "⚠️ Please use your spare GitHub account. If you don't have one, click the highlighted 'Create an account' button below.";
         warningDiv.style.cssText = `
           color: #b59f00;
           background: #fffbe6;
@@ -53,7 +56,7 @@ export async function handleGitHubFlow(browser) {
         `;
 
         // Add animation style
-        const style = document.createElement('style');
+        const style = document.createElement("style");
         style.textContent = `
           @keyframes warningPulse {
             0% { opacity: 0.8; transform: scale(1); }
@@ -71,49 +74,102 @@ export async function handleGitHubFlow(browser) {
           border: 2px solid #e3b341 !important;
           box-shadow: 0 0 5px rgba(227, 179, 65, 0.3);
         `;
+
+        // Highlight the Create Account link if it exists
+        if (createAccountLink) {
+          createAccountLink.style.cssText = `
+            background: #2ea44f !important;
+            color: white !important;
+            border-radius: 6px;
+            padding: 8px 16px !important;
+            animation: pulseBorder 2s infinite;
+            font-weight: 600 !important;
+            box-shadow: 0 0 10px rgba(46, 164, 79, 0.4);
+          `;
+
+          // Add target="_blank" to open in new tab
+          createAccountLink.setAttribute('target', '_blank');
+          
+          // Add note about returning
+          const returnNote = document.createElement('div');
+          returnNote.textContent = "After creating your account, please return to this tab to continue.";
+          returnNote.style.cssText = `
+            color: #1a7f37;
+            font-size: 12px;
+            margin-top: 8px;
+            text-align: center;
+            font-style: italic;
+          `;
+          createAccountLink.parentNode.appendChild(returnNote);
+
+          // Add pulse animation
+          const style = document.createElement('style');
+          style.textContent = `
+            @keyframes pulseBorder {
+              0% { box-shadow: 0 0 5px rgba(46, 164, 79, 0.4); }
+              50% { box-shadow: 0 0 15px rgba(46, 164, 79, 0.6); }
+              100% { box-shadow: 0 0 5px rgba(46, 164, 79, 0.4); }
+            }
+          `;
+          document.head.appendChild(style);
+        }
       }
     });
 
-    // Show login alert
+    // Show login alert with create account option
     await githubPage.evaluate(() => {
-      alert('Please login to GitHub to continue to next step');
+      alert("Please login to GitHub or create a new account (opens in new tab) to continue");
     });
 
-    // Wait for navigation after login
-    await githubPage.waitForNavigation({
-      waitUntil: 'networkidle0',
-      timeout: 600000  // 10 minutes
-    });
+    // Wait for either login success or signup page
+    while (true) {
+      await githubPage.waitForNavigation({
+        waitUntil: "networkidle0",
+        timeout: 600000 // 10 minutes
+      }).catch(() => {}); // Ignore timeout errors
 
-    // Check if login was successful
+      const currentUrl = githubPage.url();
+      if (currentUrl === "https://github.com/") {
+        break; // User is logged in, continue with the flow
+      }
+      
+      // Small delay between checks
+      await new Promise(resolve => setTimeout(resolve, 1000));
+    }
+
+    // Now check if login was successful
     const currentUrl = githubPage.url();
-    if (currentUrl === 'https://github.com/') {
+    if (currentUrl === "https://github.com/" || currentUrl === "https://github.com/dashboard") {
       // Get and store GitHub username
       const username = await githubPage.evaluate(() => {
         const metaElement = document.querySelector('meta[name="user-login"]');
-        return metaElement ? metaElement.getAttribute('content') : null;
+        return metaElement ? metaElement.getAttribute("content") : null;
       });
 
       if (username) {
-        console.log('Successfully retrieved username:', username);
+        console.log("Successfully retrieved username:", username);
         await namespaceWrapper.storeSet("github_username", username);
       }
 
       await githubPage.evaluate(() => {
-        alert('You are now successfully logged in.\nRedirecting to token creation page in 3 seconds...');
+        alert(
+          "You are now successfully logged in.\nRedirecting to token creation page in 3 seconds...",
+        );
       });
 
-      await new Promise(resolve => setTimeout(resolve, 3000));
+      await new Promise((resolve) => setTimeout(resolve, 3000));
 
       // Navigate to tokens page
-      await githubPage.goto('https://github.com/settings/tokens/new', {
-        waitUntil: 'networkidle0',
-        timeout: 600000  // 10 minutes
+      await githubPage.goto("https://github.com/settings/tokens/new", {
+        waitUntil: "networkidle0",
+        timeout: 600000, // 10 minutes
       });
 
       // Add hints and highlights for token creation
       await githubPage.evaluate(() => {
-        const inputElement = document.querySelector('input[name="oauth_access[description]"]');
+        const inputElement = document.querySelector(
+          'input[name="oauth_access[description]"]',
+        );
         if (inputElement) {
           // Style the input element
           inputElement.style.cssText = `
@@ -121,10 +177,11 @@ export async function handleGitHubFlow(browser) {
             box-shadow: 0 0 5px rgba(46, 164, 79, 0.4);
             animation: pulse 2s infinite;
           `;
-          
+
           // Create hint element
-          const hintElement = document.createElement('span');
-          hintElement.textContent = 'Please enter a name for your token, for example: 247 builder';
+          const hintElement = document.createElement("span");
+          hintElement.textContent =
+            "Please enter a name for your token, for example: 247 builder";
           hintElement.style.cssText = `
             margin-left: 10px;
             color: #2ea44f;
@@ -136,13 +193,17 @@ export async function handleGitHubFlow(browser) {
           `;
 
           // Insert hint after the input
-          inputElement.parentNode.insertBefore(hintElement, inputElement.nextSibling);
+          inputElement.parentNode.insertBefore(
+            hintElement,
+            inputElement.nextSibling,
+          );
         }
 
         // Highlight the repo scope checkbox
         const checkbox = document.querySelector('input[value="repo"]');
         if (checkbox) {
-          const checkboxContainer = checkbox.closest('li') || checkbox.parentElement;
+          const checkboxContainer =
+            checkbox.closest("li") || checkbox.parentElement;
           checkboxContainer.style.cssText = `
             background: rgba(46, 164, 79, 0.1);
             border-radius: 6px;
@@ -151,9 +212,10 @@ export async function handleGitHubFlow(browser) {
             margin: 5px 0;
             animation: pulse 2s infinite;
           `;
-          
-          const checkboxHint = document.createElement('div');
-          checkboxHint.textContent = 'Please check this box and scroll down to the "Generate token" button';
+
+          const checkboxHint = document.createElement("div");
+          checkboxHint.textContent =
+            'Please check this box and scroll down to the "Generate token" button';
           checkboxHint.style.cssText = `
             color: #2ea44f;
             font-size: 12px;
@@ -161,12 +223,12 @@ export async function handleGitHubFlow(browser) {
             margin-top: 5px;
             animation: pulse 2s infinite;
           `;
-          
+
           checkboxContainer.appendChild(checkboxHint);
         }
 
         // Add pulse animation
-        const styleSheet = document.createElement('style');
+        const styleSheet = document.createElement("style");
         styleSheet.textContent = `
           @keyframes pulse {
             0% { opacity: 0.6; }
@@ -179,68 +241,87 @@ export async function handleGitHubFlow(browser) {
 
       // Wait for navigation after clicking generate token
       await githubPage.waitForNavigation({
-        waitUntil: 'networkidle0',
-        timeout: 600000  // 10 minutes
+        waitUntil: "networkidle0",
+        timeout: 600000, // 10 minutes
       });
 
       // Check if we're on the tokens page and save token
-      if (githubPage.url() === 'https://github.com/settings/tokens') {
-        console.log('Successfully generated token');
+      if (githubPage.url() === "https://github.com/settings/tokens") {
+        console.log("Successfully generated token");
 
         const token = await githubPage.evaluate(() => {
-          const tokenElement = document.querySelector('#new-oauth-token');
+          const tokenElement = document.querySelector("#new-oauth-token");
           return tokenElement ? tokenElement.textContent : null;
         });
 
         if (token) {
-          console.log('Successfully retrieved token');
+          console.log("Successfully retrieved token");
           await namespaceWrapper.storeSet("github_token", token);
-          
+
           let postSuccess = true;
-          
+
           // Post GitHub username to API
           try {
-            const usernameResponse = await axios.post('http://localhost:30017/api/task-variables', {
-              label: "GITHUB_USERNAME",
-              value: username
-            });
+            const usernameResponse = await axios.post(
+              "http://localhost:30017/api/task-variables",
+              {
+                label: "GITHUB_USERNAME",
+                value: username,
+              },
+            );
             if (!usernameResponse.data.success) {
               postSuccess = false;
-              console.error('Failed to post GitHub username:', usernameResponse.data);
+              console.error(
+                "Failed to post GitHub username:",
+                usernameResponse.data,
+              );
             }
           } catch (error) {
             postSuccess = false;
-            console.error('Error posting GitHub username:', error.response?.data || error.message);
+            console.error(
+              "Error posting GitHub username:",
+              error.response?.data || error.message,
+            );
           }
 
           // Post GitHub token to API
           try {
-            const tokenResponse = await axios.post('http://localhost:30017/api/task-variables', {
-              label: "GITHUB_TOKEN",
-              value: token
-            });
+            const tokenResponse = await axios.post(
+              "http://localhost:30017/api/task-variables",
+              {
+                label: "GITHUB_TOKEN",
+                value: token,
+              },
+            );
             if (!tokenResponse.data.success) {
               postSuccess = false;
-              console.error('Failed to post GitHub token:', tokenResponse.data);
+              console.error("Failed to post GitHub token:", tokenResponse.data);
             }
           } catch (error) {
             postSuccess = false;
-            console.error('Error posting GitHub token:', error.response?.data || error.message);
+            console.error(
+              "Error posting GitHub token:",
+              error.response?.data || error.message,
+            );
           }
 
           // Show success alert only if both POSTs were successful
           if (postSuccess) {
             await githubPage.evaluate(() => {
-              window.flowInProgress = false;  // Reset the flag
-              alert('✅ Your GitHub information has been successfully saved!\nYou can now close this tab and return to the main page.');
+              window.flowInProgress = false; // Reset the flag
+              alert(
+                "✅ Your GitHub information has been successfully saved!\nYou can now close this tab and return to the main page.",
+              );
             });
           } else {
             await githubPage.evaluate(() => {
-              window.flowInProgress = false;  // Reset the flag even on error
-              alert('⚠️ There was an issue saving your GitHub information. Please try again.');
+              window.flowInProgress = false; // Reset the flag even on error
+              alert(
+                "⚠️ There was an issue saving your GitHub information. Please try again.",
+              );
             });
           }
-          
+
           // Only close the page if it's still open
           if (!githubPage.isClosed()) {
             await githubPage.close();
@@ -268,7 +349,7 @@ export async function handleGitHubFlow(browser) {
     }
     // Reset flow flag in case of manual close or any other scenario
     try {
-      await browser.pages().then(async pages => {
+      await browser.pages().then(async (pages) => {
         const landingPage = pages[0];
         await landingPage.evaluate(() => {
           window.flowInProgress = false;
@@ -278,4 +359,4 @@ export async function handleGitHubFlow(browser) {
       console.log("Could not reset flow flag:", error);
     }
   }
-} 
+}

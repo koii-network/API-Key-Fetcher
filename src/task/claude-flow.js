@@ -347,7 +347,7 @@ export async function handleClaudeFlow(browser) {
           hintElement.innerHTML = `
             <div style="
               position: absolute;
-              left: calc(100% + 20px);
+              right: calc(100% + 20px);
               top: 50%;
               transform: translateY(-50%);
               background: rgba(255, 255, 255, 0.9);
@@ -363,14 +363,14 @@ export async function handleClaudeFlow(browser) {
             ">
               <div style="
                 position: absolute;
-                left: -8px;
+                right: -8px;
                 top: 50%;
                 transform: translateY(-50%);
                 width: 0;
                 height: 0;
                 border-top: 8px solid transparent;
                 border-bottom: 8px solid transparent;
-                border-right: 8px solid rgba(255, 255, 255, 0.9);
+                border-left: 8px solid rgba(255, 255, 255, 0.9);
               "></div>
               <div style="
                 color: #41465D;

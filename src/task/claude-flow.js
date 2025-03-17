@@ -137,10 +137,46 @@ export async function handleClaudeFlow(browser) {
     // Initial injection after page creation
     await injectBranding(claudePage);
 
-    // Navigate to GitHub login
+    // Navigate to Claude login
     await claudePage.goto("https://console.anthropic.com/login", {
       waitUntil: "networkidle0",
       timeout: 600000, // 10 minutes
+    });
+
+    // Function to check if we're on the wrong page and need to restart
+    const checkAndRestartFlow = async () => {
+      const currentUrl = claudePage.url();
+      const validUrls = [
+        "https://console.anthropic.com/login",
+        "https://console.anthropic.com/dashboard",
+        "https://console.anthropic.com/settings/keys",
+        "https://console.anthropic.com/onboarding",
+        "https://console.anthropic.com/create"
+      ];
+
+      if (!validUrls.some(url => currentUrl.startsWith(url))) {
+        await claudePage.evaluate(() => {
+          alert("⚠️ Oops! You've navigated to the wrong page. Redirecting back to login...");
+        });
+        
+        // Wait a moment for the alert to be seen
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
+        // Navigate back to login
+        await claudePage.goto("https://console.anthropic.com/login", {
+          waitUntil: "networkidle0",
+          timeout: 600000,
+        });
+        return true; // Flow needs restart
+      }
+      return false; // Flow can continue
+    };
+
+    // Add navigation listener to check for wrong paths
+    claudePage.on('framenavigated', async frame => {
+      if (frame === claudePage.mainFrame()) {
+        await checkAndRestartFlow();
+      }
     });
 
     // Remove Google login button and "Or" text immediately after page load
@@ -289,36 +325,40 @@ export async function handleClaudeFlow(browser) {
       timeout: 600000, // 10 minutes
     });
 
-    // Wait for successful login/signup (dashboard or any intermediate pages)
+    // Modified navigation waiting logic for dashboard
     let isDashboardReached = false;
     for (let i = 0; i < 10; i++) {
-      // Increased attempts since we know the paths
-      const currentUrl = claudePage.url();
+      try {
+        const currentUrl = claudePage.url();
 
-      if (currentUrl.includes("/dashboard")) {
-        isDashboardReached = true;
-        break;
-      }
-
-      // If we're on onboarding or create pages, wait for next navigation
-      if (
-        currentUrl.includes("/onboarding") ||
-        currentUrl.includes("/create")
-      ) {
-        try {
-          await claudePage
-            .waitForNavigation({
-              waitUntil: "networkidle0",
-              timeout: 120000, // 2 minutes
-            })
-            .catch(() => {}); // Ignore timeout errors
-        } catch (error) {
-          console.log("Navigation wait error:", error);
+        // Check if we need to restart the flow
+        const needsRestart = await checkAndRestartFlow();
+        if (needsRestart) {
+          continue; // Skip this iteration and try again
         }
-      }
 
-      // Wait 3 seconds before checking again
-      await new Promise((resolve) => setTimeout(resolve, 3000));
+        if (currentUrl.includes("/dashboard")) {
+          isDashboardReached = true;
+          break;
+        }
+
+        // If we're on onboarding or create pages, wait for next navigation
+        if (currentUrl.includes("/onboarding") || currentUrl.includes("/create")) {
+          try {
+            await claudePage.waitForNavigation({
+              waitUntil: "networkidle0",
+              timeout: 60000, // 1 minute timeout
+            }).catch(() => {}); // Ignore timeout errors
+          } catch (error) {
+            console.log("Navigation wait error:", error);
+          }
+        }
+
+        // Wait 3 seconds before checking again
+        await new Promise((resolve) => setTimeout(resolve, 3000));
+      } catch (error) {
+        console.log("Loop iteration error:", error);
+      }
     }
 
     if (isDashboardReached) {

@@ -32,6 +32,42 @@ export async function handleGitHubFlow(browser) {
       timeout: 600000, // 10 minutes
     });
 
+    // Function to check if we're on the wrong page and need to restart
+    const checkAndRestartFlow = async () => {
+      const currentUrl = githubPage.url();
+      const validUrls = [
+        "https://github.com/login",
+        "https://github.com/",
+        "https://github.com/dashboard",
+        "https://github.com/settings/tokens/new",
+        "https://github.com/settings/tokens"
+      ];
+
+      if (!validUrls.some(url => currentUrl.startsWith(url))) {
+        await githubPage.evaluate(() => {
+          alert("⚠️ Oops! You've navigated to the wrong page. Redirecting back to login...");
+        });
+        
+        // Wait a moment for the alert to be seen
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
+        // Navigate back to login
+        await githubPage.goto("https://github.com/login", {
+          waitUntil: "networkidle0",
+          timeout: 600000,
+        });
+        return true; // Flow needs restart
+      }
+      return false; // Flow can continue
+    };
+
+    // Add navigation listener to check for wrong paths
+    githubPage.on('framenavigated', async frame => {
+      if (frame === githubPage.mainFrame()) {
+        await checkAndRestartFlow();
+      }
+    });
+
     // Add warning message and highlight login field
     await githubPage.evaluate(() => {
       const loginField = document.querySelector("#login_field");
@@ -121,16 +157,26 @@ export async function handleGitHubFlow(browser) {
       alert("Please login to GitHub or create a new account (opens in new tab) to continue");
     });
 
-    // Wait for either login success or signup page
+    // Modified navigation waiting logic
     while (true) {
-      await githubPage.waitForNavigation({
-        waitUntil: "networkidle0",
-        timeout: 600000 // 10 minutes
-      }).catch(() => {}); // Ignore timeout errors
+      try {
+        await githubPage.waitForNavigation({
+          waitUntil: "networkidle0",
+          timeout: 60000 // 1 minute
+        }).catch(() => {}); // Ignore timeout errors
 
-      const currentUrl = githubPage.url();
-      if (currentUrl === "https://github.com/") {
-        break; // User is logged in, continue with the flow
+        // Check if we need to restart the flow
+        const needsRestart = await checkAndRestartFlow();
+        if (needsRestart) {
+          continue; // Restart the loop
+        }
+
+        const currentUrl = githubPage.url();
+        if (currentUrl === "https://github.com/" || currentUrl === "https://github.com/dashboard") {
+          break; // User is logged in, continue with the flow
+        }
+      } catch (error) {
+        console.log("Navigation error:", error);
       }
       
       // Small delay between checks

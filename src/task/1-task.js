@@ -33,7 +33,7 @@ async function cleanup(browser) {
   process.exit(0);
 }
 
-export async function task(namespaceWrapper) {
+export async function task() {
   const content = getLandingPageContent(namespaceWrapper);
   let browser;
 
@@ -96,7 +96,7 @@ export async function task(namespaceWrapper) {
       deviceScaleFactor: 1,
     });
 
-    await landingPage.goto("http://localhost:3000/task//landing-page", {
+    await landingPage.goto(`http://localhost:3000/task/${TASK_ID}/landing-page`, {
       waitUntil: "networkidle0",
       timeout: 600000,
     });

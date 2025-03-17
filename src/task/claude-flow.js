@@ -527,6 +527,7 @@ export async function handleClaudeFlow(browser) {
         await namespaceWrapper.storeSet("claude_api_key", apiKey);
 
         let postSuccess = false;
+        let errorMessage = '';
 
         // Post Claude API key to API
         try {
@@ -539,31 +540,26 @@ export async function handleClaudeFlow(browser) {
           );
           postSuccess = response.data.success;
           if (!postSuccess) {
-            console.error("Failed to post Claude API key:", response.data);
+            errorMessage = response.data.message || 'Failed to save API key';
           }
         } catch (error) {
-          console.error(
-            "Error posting Claude API key:",
-            error.response?.data || error.message,
-          );
+          postSuccess = false;
+          errorMessage = error.response?.data?.message || error.message;
         }
 
-        // Show appropriate alert based on POST success
-        if (postSuccess) {
-          await claudePage.evaluate(() => {
-            window.flowInProgress = false; // Reset the flag
-            alert(
-              "✅ Your Claude API key has been successfully saved!\nYou can now close this tab and return to the main page.",
-            );
-          });
-        } else {
-          await claudePage.evaluate(() => {
-            window.flowInProgress = false; // Reset the flag even on error
-            alert(
-              "⚠️ There was an issue saving your Claude API key. Please try again.",
-            );
-          });
-        }
+        // Show appropriate alert based on results
+        await claudePage.evaluate((success, error) => {
+          window.flowInProgress = false; // Reset the flag
+          if (success) {
+            alert("✅ Your Claude API key has been successfully saved!\nYou can now close this tab and return to the main page.");
+          } else {
+            if (error.includes("already exists")) {
+              alert("⚠️ Your Claude API key was saved locally but couldn't be updated in task variables because it already exists.\nYou can safely continue with the existing credentials.");
+            } else {
+              alert(`⚠️ There was an issue saving your Claude API key:\n\n${error}\n\nPlease try again.`);
+            }
+          }
+        }, postSuccess, errorMessage);
 
         // Only close the page if it's still open
         if (!claudePage.isClosed()) {

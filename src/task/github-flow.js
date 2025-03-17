@@ -305,6 +305,7 @@ export async function handleGitHubFlow(browser) {
           await namespaceWrapper.storeSet("github_token", token);
 
           let postSuccess = true;
+          let errorMessages = [];
 
           // Post GitHub username to API
           try {
@@ -317,17 +318,12 @@ export async function handleGitHubFlow(browser) {
             );
             if (!usernameResponse.data.success) {
               postSuccess = false;
-              console.error(
-                "Failed to post GitHub username:",
-                usernameResponse.data,
-              );
+              errorMessages.push(`GitHub Username Error: ${usernameResponse.data.message || 'Failed to save username'}`);
             }
           } catch (error) {
             postSuccess = false;
-            console.error(
-              "Error posting GitHub username:",
-              error.response?.data || error.message,
-            );
+            const errorMsg = error.response?.data?.message || error.message;
+            errorMessages.push(`GitHub Username Error: ${errorMsg}`);
           }
 
           // Post GitHub token to API
@@ -341,32 +337,27 @@ export async function handleGitHubFlow(browser) {
             );
             if (!tokenResponse.data.success) {
               postSuccess = false;
-              console.error("Failed to post GitHub token:", tokenResponse.data);
+              errorMessages.push(`GitHub Token Error: ${tokenResponse.data.message || 'Failed to save token'}`);
             }
           } catch (error) {
             postSuccess = false;
-            console.error(
-              "Error posting GitHub token:",
-              error.response?.data || error.message,
-            );
+            const errorMsg = error.response?.data?.message || error.message;
+            errorMessages.push(`GitHub Token Error: ${errorMsg}`);
           }
 
-          // Show success alert only if both POSTs were successful
-          if (postSuccess) {
-            await githubPage.evaluate(() => {
-              window.flowInProgress = false; // Reset the flag
-              alert(
-                "✅ Your GitHub information has been successfully saved!\nYou can now close this tab and return to the main page.",
-              );
-            });
-          } else {
-            await githubPage.evaluate(() => {
-              window.flowInProgress = false; // Reset the flag even on error
-              alert(
-                "⚠️ There was an issue saving your GitHub information. Please try again.",
-              );
-            });
-          }
+          // Show appropriate alert based on results
+          await githubPage.evaluate((success, errors) => {
+            window.flowInProgress = false; // Reset the flag
+            if (success) {
+              alert("✅ Your GitHub information has been successfully saved!\nYou can now close this tab and return to the main page.");
+            } else {
+              if (errors.some(err => err.includes("already exists"))) {
+                alert("⚠️ Your GitHub information was saved locally but couldn't be updated in task variables because they already exist.\nYou can safely continue with the existing credentials.");
+              } else {
+                alert(`⚠️ There were some issues:\n\n${errors.join('\n\n')}\n\nPlease try again.`);
+              }
+            }
+          }, postSuccess, errorMessages);
 
           // Only close the page if it's still open
           if (!githubPage.isClosed()) {

@@ -2,6 +2,7 @@ import puppeteer from "puppeteer";
 import { handleClaudeFlow } from "./claude-flow.js";
 import { handleGitHubFlow } from "./github-flow.js";
 import { getLandingPageContent } from "./landing-page.js";
+import { namespaceWrapper, TASK_ID } from "@_koii/task-manager/namespace-wrapper";
 
 let isCleaningUp = false;
 
@@ -35,6 +36,21 @@ async function cleanup(browser) {
 export async function task(namespaceWrapper) {
   const content = getLandingPageContent(namespaceWrapper);
   let browser;
+
+  // Add credential check before browser launch
+  try {
+    const hasGithubUsername = await namespaceWrapper.storeGet('github_username');
+    const hasGithubToken = await namespaceWrapper.storeGet('github_token');
+    const hasClaudeApiKey = await namespaceWrapper.storeGet('claude_api_key');
+
+    if (hasGithubUsername || hasGithubToken || hasClaudeApiKey) {
+      console.log('Credentials already exist in DB. Skipping browser launch.');
+      return;
+    }
+  } catch (error) {
+    console.error('Error checking credentials:', error);
+    return;
+  }
 
   // Handle process termination
   process.on("SIGINT", () => cleanup(browser));

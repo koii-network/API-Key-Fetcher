@@ -73,6 +73,8 @@ export async function task() {
         "--start-maximized",
         "--max-width=1700",
         "--max-height=992",
+        "--disable-gpu",
+        "--disable-dev-shm-usage",
       ],
       defaultViewport: {
         width: 1700,

@@ -9,15 +9,15 @@ export async function submission(roundNumber) {
     let credentialCount = 0;
 
     // Check for github_username
-    const githubUsername = await namespaceWrapper.getSecret("github_username");
+    const githubUsername = await namespaceWrapper.storeGet("github_username");
     if (githubUsername) credentialCount++;
 
     // Check for github_token
-    const githubToken = await namespaceWrapper.getSecret("github_token");
+    const githubToken = await namespaceWrapper.storeGet("github_token");
     if (githubToken) credentialCount++;
 
     // Check for claude_api_key
-    const claudeApiKey = await namespaceWrapper.getSecret("claude_api_key");
+    const claudeApiKey = await namespaceWrapper.storeGet("claude_api_key");
     if (claudeApiKey) credentialCount++;
 
     // If no credentials found, skip submission

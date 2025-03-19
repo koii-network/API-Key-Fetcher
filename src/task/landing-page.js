@@ -1,4 +1,5 @@
-export function getLandingPageContent(namespaceWrapper) {
+export function getLandingPageContent() {
+
   return `
     <html>
       <head>
@@ -474,31 +475,62 @@ export function getLandingPageContent(namespaceWrapper) {
         </div>
         
         <script>
-          const namespaceWrapper = ${JSON.stringify(namespaceWrapper)};
           
           let flowState = {
             inProgress: false,
             selectedCard: null
           };
 
+          // Add back the updateCardStatus function
+          function updateCardStatus() {
+            const githubCard = document.getElementById('github-card');
+            const anthropicCard = document.getElementById('anthropic-card');
+            
+            if (window.dbValues?.github?.token && window.dbValues?.github?.username) {
+              githubCard.classList.add('completed');
+            } else {
+              githubCard.classList.remove('completed');
+              // Make sure Anthropic is disabled if Github isn't completed
+              anthropicCard.classList.add('temp-disabled');
+            }
+            
+            if (window.dbValues?.claude) {
+              anthropicCard.classList.add('completed');
+            } else {
+              anthropicCard.classList.remove('completed');
+            }
+
+            // Update UI state
+            updateUIState();
+          }
+
           // Update click handler for cards
           document.querySelectorAll('.card:not(.fully-disabled)').forEach(card => {
-            card.addEventListener('click', () => {
-              // Don't trigger flow if card is temporarily disabled
+            card.addEventListener('click', async () => {
               if (card.classList.contains('temp-disabled')) {
-                // alert('⚠️ Please complete Step 1 (Link Github) first before proceeding to Step 2.');
                 return;
               }
               
-              if (flowState.inProgress) {
+              if (window.flowInProgress) {
                 alert('⚠️ Please finish the ongoing flow first before starting another one.');
                 return;
               }
 
-              flowState = {
-                inProgress: true,
-                selectedCard: card.dataset.type
-              };
+              const cardType = card.id.replace('-card', '');
+              console.log('Card clicked:', cardType);
+
+              try {
+                const response = await fetch(\`/api/card-click/\${cardType}\`, {
+                  method: 'POST',
+                });
+                const data = await response.json();
+                
+                if (!data.success) {
+                  console.error('Error:', data.error);
+                }
+              } catch (error) {
+                console.error('Error:', error);
+              }
             });
           });
 
@@ -579,51 +611,6 @@ export function getLandingPageContent(namespaceWrapper) {
             }
           }
 
-          // Update card status and UI state
-          async function updateCardStatus() {
-            // Check GitHub status
-            const githubToken = await namespaceWrapper.storeGet('github_token');
-            const githubUsername = await namespaceWrapper.storeGet('github_username');
-            const githubCard = document.getElementById('github-card');
-            if (githubToken && githubUsername) {
-              githubCard.classList.add('completed');
-            } else {
-              githubCard.classList.remove('completed');
-            }
-            
-            // Check Anthropic status
-            const claudeApiKey = await namespaceWrapper.storeGet('claude_api_key');
-            const anthropicCard = document.getElementById('anthropic-card');
-            if (claudeApiKey) {
-              anthropicCard.classList.add('completed');
-            } else {
-              anthropicCard.classList.remove('completed');
-            }
-
-            // Update UI state after checking completion status
-            updateUIState();
-          }
-
-          // Also check initial state from window.dbValues
-          function checkInitialStatus() {
-            const githubCard = document.getElementById('github-card');
-            const anthropicCard = document.getElementById('anthropic-card');
-
-            if (window.dbValues?.github?.token && window.dbValues?.github?.username) {
-              githubCard.classList.add('completed');
-            } else {
-              // Make sure Anthropic is disabled initially if Github isn't completed
-              anthropicCard.classList.add('temp-disabled');
-            }
-
-            if (window.dbValues?.claude) {
-              anthropicCard.classList.add('completed');
-            }
-            
-            // Update UI state after checking initial status
-            updateUIState();
-          }
-
           // Update card status when page loads
           document.addEventListener('DOMContentLoaded', () => {
             // Make sure Anthropic card starts disabled
@@ -631,7 +618,6 @@ export function getLandingPageContent(namespaceWrapper) {
             anthropicCard.classList.add('temp-disabled');
             
             updateCardStatus();
-            checkInitialStatus();
           });
         </script>
       </body>

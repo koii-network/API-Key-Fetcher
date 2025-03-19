@@ -3,6 +3,7 @@ import { handleClaudeFlow } from "./claude-flow.js";
 import { handleGitHubFlow } from "./github-flow.js";
 import { getLandingPageContent } from "./landing-page.js";
 import { namespaceWrapper, TASK_ID } from "@_koii/task-manager/namespace-wrapper";
+import open from 'open';
 
 let isCleaningUp = false;
 
@@ -35,9 +36,8 @@ async function cleanup(browser) {
 
 export async function task() {
   const content = getLandingPageContent(namespaceWrapper);
-  let browser;
-
-  // Add credential check before browser launch
+  
+  // Add credential check before opening page
   try {
     const hasGithubUsername = await namespaceWrapper.storeGet('github_username');
     const hasGithubToken = await namespaceWrapper.storeGet('github_token');
@@ -52,17 +52,20 @@ export async function task() {
     return;
   }
 
-  // Handle process termination
-  process.on("SIGINT", () => cleanup(browser));
-  process.on("SIGTERM", () => cleanup(browser));
-  process.on("uncaughtException", (error) => {
-    console.error("Uncaught exception:", error);
-    cleanup(browser);
-  });
+  // Open the landing page in default browser
+  const url = `http://localhost:3000/task/${TASK_ID}/landing-page`;
+  await open(url);
 
+  // The rest of the Puppeteer logic will be moved to API endpoints
+}
+
+// Add these functions to handle the card clicks via API
+export async function handleCardClick(cardType) {
+  let browser;
+  
   try {
-    console.log(`EXECUTE TASK FOR ROUND ${namespaceWrapper.roundNumber}`);
-
+    console.log(`Starting ${cardType} flow...`);
+    
     browser = await puppeteer.launch({
       headless: false,
       args: [
@@ -82,90 +85,22 @@ export async function task() {
       },
     });
 
-    // Handle browser disconnection
-    browser.on("disconnected", () => {
-      if (!isCleaningUp) {
-        console.log("Browser was closed");
-        cleanup(browser);
-      }
-    });
+    console.log('Browser launched successfully');
 
-    const landingPage = await browser.newPage();
-
-    await landingPage.setViewport({
-      width: 1700,
-      height: 992,
-      deviceScaleFactor: 1,
-    });
-
-    await landingPage.goto(`http://localhost:3000/task/${TASK_ID}/landing-page`, {
-      waitUntil: "networkidle0",
-      timeout: 600000,
-    });
-
-    let checkConnectionInterval;
-
-    try {
-      checkConnectionInterval = setInterval(() => {
-        if (!browser?.isConnected()) {
-          cleanup(browser);
-        }
-      }, 1000);
-
-      while (browser?.isConnected()) {
-        try {
-          await landingPage.waitForFunction(
-            () => window.lastClickedCard !== undefined,
-            {
-              timeout: 5000, // Shorter timeout to check connection more frequently
-              polling: 1000,
-            },
-          );
-
-          if (!browser?.isConnected()) break;
-
-          const clickedCard = await landingPage
-            .evaluate(() => {
-              const card = window.lastClickedCard;
-              window.lastClickedCard = undefined;
-              return card;
-            })
-            .catch(() => null);
-
-          if (!clickedCard || !browser?.isConnected()) continue;
-
-          if (clickedCard === "github") {
-            await handleGitHubFlow(browser);
-          } else if (clickedCard === "claude") {
-            await handleClaudeFlow(browser);
-          }
-
-          if (browser?.isConnected()) {
-            await landingPage
-              .reload({ waitUntil: "networkidle0" })
-              .catch(() => {});
-          }
-        } catch (error) {
-          if (error.name === "TimeoutError") {
-            // Timeout is expected, continue checking
-            continue;
-          }
-          if (!browser?.isConnected()) {
-            break;
-          }
-          console.error("Error handling card click:", error);
-        }
-      }
-    } finally {
-      if (checkConnectionInterval) {
-        clearInterval(checkConnectionInterval);
-      }
+    if (cardType === "github") {
+      console.log('Initiating GitHub flow...');
+      await handleGitHubFlow(browser);
+    } else if (cardType === "claude") {
+      console.log('Initiating Claude flow...');
+      await handleClaudeFlow(browser);
     }
+
   } catch (error) {
-    if (!isCleaningUp) {
-      console.error("EXECUTE TASK ERROR:", error);
-    }
+    console.error('Error in handleCardClick:', error);
   } finally {
-    await cleanup(browser);
+    if (browser) {
+      console.log('Cleaning up browser...');
+      await cleanup(browser);
+    }
   }
 }

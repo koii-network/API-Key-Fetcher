@@ -14,7 +14,6 @@ async function cleanup(browser) {
   try {
     if (browser?.isConnected()) {
       const pages = await browser.pages().catch(() => []);
-      // Simply close pages without needing to clean up event listeners
       await Promise.all(
         pages.map(async (page) => {
           try {
@@ -30,8 +29,8 @@ async function cleanup(browser) {
     // Ignore cleanup errors
   }
 
-  console.log("Cleanup complete, exiting...");
-  process.exit(0);
+  console.log("Cleanup complete");
+  isCleaningUp = false;  // Reset flag instead of exiting
 }
 
 export async function task() {
@@ -43,7 +42,7 @@ export async function task() {
     const hasGithubToken = await namespaceWrapper.storeGet('github_token');
     const hasClaudeApiKey = await namespaceWrapper.storeGet('claude_api_key');
 
-    if (hasGithubUsername || hasGithubToken || hasClaudeApiKey) {
+    if (hasGithubUsername && hasGithubToken && hasClaudeApiKey) {
       console.log('Credentials already exist in DB. Skipping browser launch.');
       return;
     }

@@ -355,7 +355,7 @@ export async function handleGitHubFlow(browser) {
 
           // Show appropriate alert based on results
           await githubPage.evaluate((success, errors) => {
-            window.flowInProgress = false; // Reset the flag
+            window.flowInProgress = false;
             if (success) {
               alert("✅ Your GitHub information has been successfully saved!\nYou can now close this tab and return to the main page.");
             } else {
@@ -367,7 +367,7 @@ export async function handleGitHubFlow(browser) {
             }
           }, postSuccess, errorMessages);
 
-          // Only close the page if it's still open
+          // Only close the GitHub page
           if (!githubPage.isClosed()) {
             await githubPage.close();
           }
@@ -390,7 +390,7 @@ export async function handleGitHubFlow(browser) {
     }
     return false;
   } finally {
-    // Only close the page in finally if it exists and hasn't been closed yet
+    // Only close the GitHub page in finally if it exists and hasn't been closed
     if (githubPage && !githubPage.isClosed()) {
       try {
         await githubPage.close();

@@ -520,7 +520,7 @@ export function getLandingPageContent() {
               console.log('Card clicked:', cardType);
 
               try {
-                const response = await fetch(\`/api/card-click/\${cardType}\`, {
+                const response = await fetch(\`/task//api/card-click/\${cardType}\`, {
                   method: 'POST',
                 });
                 const data = await response.json();

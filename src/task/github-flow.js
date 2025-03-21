@@ -4,33 +4,41 @@ import axios from "axios";
 export async function handleGitHubFlow(browser) {
   let githubPage;
   try {
+    console.log('Creating new page for GitHub flow...');
     // Create new page for GitHub flow
     githubPage = await browser.newPage();
+    console.log('New page created successfully');
 
     // Add close listener to reset flag
     githubPage.on("close", async () => {
+      console.log('GitHub page closed, resetting flow flag...');
       try {
         const pages = await browser.pages();
         const landingPage = pages[0];
         await landingPage.evaluate(() => {
           window.flowInProgress = false;
         });
+        console.log('Flow flag reset successfully');
       } catch (error) {
         console.log("Could not reset flow flag on page close:", error);
       }
     });
 
+    console.log('Setting viewport...');
     // Set viewport size
     await githubPage.setViewport({
       width: 1700,
       height: 992,
     });
+    console.log('Viewport set successfully');
 
+    console.log('Navigating to GitHub login...');
     // Navigate to GitHub login
     await githubPage.goto("https://github.com/login", {
       waitUntil: "networkidle0",
       timeout: 600000, // 10 minutes
     });
+    console.log('Navigation to GitHub login successful');
 
     // Function to check if we're on the wrong page and need to restart
     const checkAndRestartFlow = async () => {
@@ -347,7 +355,7 @@ export async function handleGitHubFlow(browser) {
 
           // Show appropriate alert based on results
           await githubPage.evaluate((success, errors) => {
-            window.flowInProgress = false; // Reset the flag
+            window.flowInProgress = false;
             if (success) {
               alert("✅ Your GitHub information has been successfully saved!\nYou can now close this tab and return to the main page.");
             } else {
@@ -359,7 +367,7 @@ export async function handleGitHubFlow(browser) {
             }
           }, postSuccess, errorMessages);
 
-          // Only close the page if it's still open
+          // Only close the GitHub page
           if (!githubPage.isClosed()) {
             await githubPage.close();
           }
@@ -370,13 +378,19 @@ export async function handleGitHubFlow(browser) {
     return false;
   } catch (error) {
     console.error("GitHub flow error:", error);
+    console.error("Error stack:", error.stack);
     // Reset flow flag on error
-    await browser.evaluate(() => {
-      window.flowInProgress = false;
-    });
+    try {
+      await browser.evaluate(() => {
+        window.flowInProgress = false;
+      });
+      console.log('Flow flag reset after error');
+    } catch (evalError) {
+      console.error('Error resetting flow flag:', evalError);
+    }
     return false;
   } finally {
-    // Only close the page in finally if it exists and hasn't been closed yet
+    // Only close the GitHub page in finally if it exists and hasn't been closed
     if (githubPage && !githubPage.isClosed()) {
       try {
         await githubPage.close();

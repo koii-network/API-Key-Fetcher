@@ -1,5 +1,6 @@
 import { namespaceWrapper, app } from "@_koii/task-manager/namespace-wrapper";
 import { getLandingPageContent } from './landing-page.js';
+import { handleCardClick } from './1-task.js';
 
 export async function routes() {
   /**
@@ -48,4 +49,26 @@ export async function routes() {
     console.log("value", value);
     res.status(200).json({ value: value });
   });
+
+  app.post('/api/card-click/:type', async (req, res) => {
+    const { type } = req.params;
+    console.log(`Received card click request for type: ${type}`);
+    
+    if (type !== 'github' && type !== 'anthropic') {
+      console.log(`Invalid card type: ${type}`);
+      return res.status(400).json({ error: 'Invalid card type' });
+    }
+
+    try {
+      console.log(`Handling ${type} card click...`);
+      const flowType = type === 'anthropic' ? 'claude' : type;
+      await handleCardClick(flowType);
+      console.log(`${type} flow completed successfully`);
+      res.json({ success: true });
+    } catch (error) {
+      console.error(`Error handling ${type} card click:`, error);
+      res.status(500).json({ error: 'Failed to handle card click' });
+    }
+  });
 }
+

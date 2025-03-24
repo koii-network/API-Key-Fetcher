@@ -54,14 +54,15 @@ export async function routes() {
     const { type } = req.params;
     console.log(`Received card click request for type: ${type}`);
     
-    if (type !== 'github' && type !== 'claude') {
+    if (type !== 'github' && type !== 'anthropic') {
       console.log(`Invalid card type: ${type}`);
       return res.status(400).json({ error: 'Invalid card type' });
     }
 
     try {
       console.log(`Handling ${type} card click...`);
-      await handleCardClick(type);
+      const flowType = type === 'anthropic' ? 'claude' : type;
+      await handleCardClick(flowType);
       console.log(`${type} flow completed successfully`);
       res.json({ success: true });
     } catch (error) {
